@@ -1,15 +1,20 @@
-env = {
-	uid: /*{{ uid }}*/ ,
-	
-	secret: /*{{ secret }}*/,	
+var math=mathjs();
 
-	token: /*{{ token }}*/,
+var env = {
+	'uid': false/*{{ uid }}*/ ,
 	
-	tabs: {
-			/*{{ tabs }}*/
-		},
+	'secret': false/*{{ secret }}*/,	
+
+	'token': false/*{{ token }}*/,
 	
-	vars: {
+	'tabs': [
+				{
+				'name': 'tab1',
+				'code': '',
+				}
+		],
+	
+	'vars': {
 		/*{% if vars %}
 		{{ vars }}
 		{% else %}*/
@@ -19,14 +24,15 @@ env = {
 		//{% endif %}
 		},
 	
-	history: {
-		
+	'history': {
+		'0': "init()",
 		},
-	}
+	};
 
-binary_ops = ['+', '-', '*', '/', '^', '&', '|', '&&', '||']
+var binary_ops = ['+', '-', '*', '/', '^', '&', '|', '&&', '||'];
 
 
 function exec_statement( line ){
 
 }
+

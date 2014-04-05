@@ -2,17 +2,19 @@
 <head>
 <title>Welcome to FreeBMD!</title>
 <script type="text/javascript" src="js/jquery-1.11.0.min.js"></script>
-<script type="text/javascript" src="js/math.min.js"></script> // Import Math.js library - mathjs.org
-<script type="text/javascript" src="js/lib.js"></script> // Main library for FreeBMD
+<script type="text/javascript" src="js/math.min.js"></script> <!-- Import Math.js library - mathjs.org -->
+<script type="text/javascript" src="js/lib.js"></script> <!-- Main library for FreeBMD -->
 <script type="text/javascript">
 	function test_str(){
 		eval($('#tester').value);
 		return true;
 	}
+</script>
 </head>
 <body>
 <form action="#" onsubmit="return test_str()">
 	<input type="text" id="tester"></input>
-	<input type="submit" />
+	<input type="submit" value="Submit"></input>
+	</form>
 </body>
 </html>
