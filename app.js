@@ -5,11 +5,11 @@
 var express = require('express');
 // var MongoStore = require('connect-mongo')(express);
 // var flash = require('express-flash');
-// var path = require('path');
+var path = require('path');
 // var mongoose = require('mongoose');
 // var passport = require('passport');
-// var expressValidator = require('express-validator');
-// var connectAssets = require('connect-assets');
+var expressValidator = require('express-validator');
+var connectAssets = require('connect-assets');
 
 /**
  * Load controllers.
@@ -71,12 +71,12 @@ app.use(express.methodOverride());
 //     auto_reconnect: true
 //   })
 // }));
-app.use(express.csrf());
+// app.use(express.csrf());
 // app.use(passport.initialize());
 // app.use(passport.session());
 app.use(function(req, res, next) {
   res.locals.user = req.user;
-  res.locals._csrf = req.csrfToken();
+  //res.locals._csrf = req.csrfToken();
   res.locals.secrets = secrets;
   next();
 });
