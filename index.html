@@ -1,20 +1,59 @@
-<html>
+<!DOCTYPE html>
+<html lang="en" ng-app="eweekApp">
 <head>
-<title>Welcome to FreeBMD!</title>
-<script type="text/javascript" src="js/jquery-1.11.0.min.js"></script>
-<script type="text/javascript" src="js/math.min.js"></script> <!-- Import Math.js library - mathjs.org -->
-<script type="text/javascript" src="js/lib.js"></script> <!-- Main library for FreeBMD -->
-<script type="text/javascript">
-	function test_str(){
-		eval($('#tester').value);
-		return true;
-	}
-</script>
+	<title>Welcome to FreeBMD!</title>
+	<link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.1.1/css/bootstrap.css">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="css/style.css">
+	<script type="text/javascript" src="js/jquery-1.11.0.min.js"></script>
+	<script type="text/javascript" src="js/math.min.js"></script> <!-- Import Math.js library - mathjs.org -->
+	<script type="text/javascript" src="js/lib.js"></script> <!-- Main library for FreeBMD -->
+	<script type="text/javascript" src="components/jq-console/jqconsole.min.js"></script>
 </head>
 <body>
-<form action="#" onsubmit="return test_str()">
-	<input type="text" id="tester"></input>
-	<input type="submit" value="Submit"></input>
-	</form>
+	
+	<div class="container">
+		<div class="row">
+			<h1>Welcome to FreeBMD</h1>
+		</div>	
+		
+		<div class="row">
+			<div id="console"></div>
+		</div>
+	</div>
+
+<script type="text/javascript">
+    // $('#console').jqconsole('welcomeString', 'promptLabel', 'continueLabel');
+
+    $(function () {
+        var jqconsole = $('#console').jqconsole('Hi\n', '>>>');
+        var startPrompt = function () {
+          // Start the prompt with history enabled.
+          jqconsole.Prompt(true, function (input) {
+            // Output input with the class jqconsole-output.
+            jqconsole.Write(math.eval(input) + '\n', 'jqconsole-output');
+            // Restart the prompt.
+            startPrompt();
+          });
+        };
+        startPrompt();
+      });
+
+	$("#input").submit(function(e){
+	    e.preventDefault();
+	});
+
+	$('#button').click(function(e) {
+		e.preventDefault();
+
+		// Output using MathJS
+		$('#output').append(math.eval($('#tester').val()) + '<br/>');
+
+		// Parse the string
+		var input = bmd.parse($('tester').val());		
+
+	});
+</script>
+
 </body>
 </html>

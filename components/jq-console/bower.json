@@ -1,0 +1,8 @@
+{
+  "name": "jq-console",
+  "version": "2.10.0",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/replit/jq-console.git"
+  }
+}
