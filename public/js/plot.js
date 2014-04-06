@@ -1,47 +1,18 @@
-// function sinAndCos() {
-//   var sin = [],sin2 = [],
-//       cos = [];
-
-//   //Data is represented as an array of {x,y} pairs.
-//   for (var i = 0; i < 100; i++) {
-//     sin.push({x: i, y: Math.sin(i/10)});
-//     sin2.push({x: i, y: Math.sin(i/10) *0.25 + 0.5});
-//     cos.push({x: i, y: .5 * Math.cos(i/10)});
-//   }
-
-//   //Line chart data should be sent as an array of series objects.
-//   return [
-//     {
-//       values: sin,      //values - represents the array of {x,y} data points
-//       key: 'Sine Wave', //key  - the name of the series.
-//       color: '#ff7f0e'  //color - optional: choose your own line color.
-//     },
-//     {
-//       values: cos,
-//       key: 'Cosine Wave',
-//       color: '#2ca02c'
-//     },
-//     {
-//       values: sin2,
-//       key: 'Another sine wave',
-//       color: '#7777ff',
-//       area: true      //area - set to true if you want this line to turn into a filled area chart.
-//     }
-//   ];
-// }
-
-function d3_plot_data(data) {
-	return function() {
-		var _data = data;
-		return _data;
-	}
-}
-
 function d3_plot (data, type) {
-
+	var myData = [];
 	console.log(data);
+	if(data.x.length == data.y.length){
+		for(var i =0; i < data.y.length; i++) {
+			myData.push({x: data.x[i], y: data.y[i]});
+		}
+	}
+	else {
+		return "Error: matrix dimensions must agree";
+	}
 
-		/*These lines are all chart setup.  Pick and choose which chart features you want to utilize. */
+	console.log(myData);
+
+	/*These lines are all chart setup.  Pick and choose which chart features you want to utilize. */
 	  var chart = nv.models.lineChart()
 	                .margin({left: 100})  //Adjust chart margins to give the x-axis some breathing room.
 	                .useInteractiveGuideline(true)  //We want nice looking tooltips and a guideline!
@@ -59,11 +30,8 @@ function d3_plot (data, type) {
 	      .axisLabel('Voltage (v)')
 	      .tickFormat(d3.format('.02f'));
 
-	  /* Done setting the chart up? Time to render it!*/
-	  var myData = data;   //You need data...
-
 	  d3.select('#chart svg')    //Select the <svg> element you want to render the chart in.   
-	      .datum(data)         //Populate the <svg> element with chart data...
+	      .datum(myData)         //Populate the <svg> element with chart data...
 	      .call(chart);          //Finally, render the chart!
 
 	  //Update the chart when window resizes.
