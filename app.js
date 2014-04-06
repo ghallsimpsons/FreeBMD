@@ -48,7 +48,7 @@ app.get('/:secret', function(request, response) {
 			if(result.rows.length == 0) return response.redirect("/");
 			var _env = JSON.parse(result.rows[0].environment);
 			console.log(_env);
-			return response.render('index',{env: _env);
+			return response.render('index',{env: _env});
 		});
 	});
 });
