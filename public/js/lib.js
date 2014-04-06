@@ -36,6 +36,34 @@ function load_locals(){
 		math[localvar]=env.vars[localvar].val;
 	}
 }
+
+function d3_plot(x, y, lineStyle, chartStyle) {
+	nv.addGraph(function() {
+	  var chart = nv.models.lineChart()
+	    .useInteractiveGuideline(true)
+	    ;
+
+	  chart.xAxis
+	    .axisLabel('Time (ms)')
+	    .tickFormat(d3.format(',r'))
+	    ;
+
+	  chart.yAxis
+	    .axisLabel('Voltage (v)')
+	    .tickFormat(d3.format('.02f'))
+	    ;
+
+	  d3.select('#chart svg')
+	    .datum(data())
+	    .transition().duration(500)
+	    .call(chart)
+	    ;
+
+	  nv.utils.windowResize(chart.update);
+
+	  return chart;
+	});
+}
 	
 function isBareword( word ){
 	if(word.match(/^[a-zA-Z]\w*$/)) return true; else return false;
@@ -160,22 +188,29 @@ function exec_statement( line ){
 	try{
 		parsed_line=preparse(line);
 		split_line = tokenize(parsed_line, all_tokens);
+		
 		for(var i in split_line){
 			split_line[i]=postparse(split_line[i]);
 		}
 		console.log(split_line);
+		
 		if(split_line[0]=="for"){
+			
 		}
+		else if(split_line[0]=="plot"){
+
+		}
+
 		else if (split_line.indexOf('=')>0 && split_line[split_line.indexOf('=')+1]!='='){
 			//Yay! We've found an assignment!
 			if( 1==1 ){
-			varname=split_line.slice(0,split_line.indexOf('=')).join('');
-			tmpvar={};
-			tmpvar['val'] = eval_expr( split_line.slice(split_line.indexOf('=')+1).join('') );
-			tmpvar['type']='scalar';
-			env.vars[varname]=tmpvar;
-			math[varname]=tmpvar.val;
-			return env.vars[varname]['val'];
+				varname=split_line.slice(0,split_line.indexOf('=')).join('');
+				tmpvar={};
+				tmpvar['val'] = eval_expr( split_line.slice(split_line.indexOf('=')+1).join('') );
+				tmpvar['type']='scalar';
+				env.vars[varname]=tmpvar;
+				math[varname]=tmpvar.val;
+				return env.vars[varname]['val'];
 			}
 			//else if( /*obj_prop*/ ){
 				
@@ -183,6 +218,7 @@ function exec_statement( line ){
 			//else if( /*matrix*/ ){
 			
 			//}
+
 		}
 		return eval_expr(line);
 	
