@@ -205,6 +205,7 @@ function exec_statement( line ){
 			
 		}
 		else if(split_line[0]=="plot"){
+			$('#chart-modal').modal('toggle')
 			var i=1;
 			var data={};
 			var type='line';
