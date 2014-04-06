@@ -124,25 +124,7 @@
 	});
 
 	$('#plot_test').click(function() {
-		//var chart = d3_plot(data,'line');
-
-		nv.addGraph(function() {
-		  var chart = nv.models.lineChart()
-		                .margin({left: 100})  //Adjust chart margins to give the x-axis some breathing room.
-		                .useInteractiveGuideline(true)  //We want nice looking tooltips and a guideline!
-		                .transitionDuration(350)  //how fast do you want the lines to transition?
-		                .showLegend(true)       //Show the legend, allowing users to turn on/off line series.
-		                .showYAxis(true)        //Show the y-axis
-		                .showXAxis(true);
-
-		  chart.xAxis     //Chart x-axis settings
-		      .axisLabel('Time (ms)')
-		      .tickFormat(d3.format(',r'));
-
-		  chart.yAxis     //Chart y-axis settings
-		      .axisLabel('Voltage (v)')
-		      .tickFormat(d3.format('.02f'));
-	      var data = [{ 
+		var data = [{ 
 					key:'Line 1',
 					values: {
 						x: [1, 2, 3, 4, 5, 6, 7, 8],
@@ -158,15 +140,7 @@
 					},
 					color: '#2ca02c'
 				}];
-		  console.log(data);    
-		  d3.select('#chart svg')    //Select the <svg> element you want to render the chart in.   
-		      .datum(data)         //Populate the <svg> element with chart data...
-		      .call(chart);          //Finally, render the chart!
-
-		  //Update the chart when window resizes.
-		  nv.utils.windowResize(function() { chart.update() });
-		  return chart;
-		});
+		var chart = d3_plot(data,'line');
 
 		// xAxisTitle('Time', chart);
 		// yAxisTitle('Dudes in the Room', chart);

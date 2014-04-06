@@ -62,9 +62,6 @@ function d3_plot (data, type) {
 	  nv.utils.windowResize(function() { chart.update() });
 	  return chart;
 	});
-	/**************************************
-	 * Simple test data generator
-	 */
 
 }
 	
