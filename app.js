@@ -1,9 +1,4 @@
-// var connString = 'postgres://zntxnoglkwslwi:yOyhl4tIsGg1FzI4u0wTchC0HU@ec2-54-204-38-16.compute-1.amazonaws.com:5432/desc87qe0bn276';
 
-// var pg = require('pg');
-// var express = require("express");
-// var app = express();
-// app.use(express.logger());
 
 
 // app.get('/', function(request, response) {
@@ -20,18 +15,13 @@
 // // 			response.render('index', { env: result.rows });
 // // 		});
 
-// // 	});
-// // });
-
-// var port = Number(process.env.PORT || 5000);
-// app.listen(port, function() {
-// 	console.log("Listening on " + port);
-// });
-
-
 // web.js
+var pg = require('pg');
 var express = require("express");
 var app = express();
+
+var connString = 'postgres://zntxnoglkwslwi:yOyhl4tIsGg1FzI4u0wTchC0HU@ec2-54-204-38-16.compute-1.amazonaws.com:5432/desc87qe0bn276';
+
 
 app.use(
      "/",
@@ -39,6 +29,7 @@ app.use(
 );
 
 app.get('/:secret', function(request, response) {
+	pg.connect(connString, function(err, client, done) {});
 	var secret = request.params.secret;
 	response.send(secret);
 });
