@@ -39,7 +39,7 @@ function d3_plot_data(data) {
 
 function d3_plot (data, type) {
 
-	function myDataFun = d3_plot_data(data);
+	myDataFun = d3_plot_data(data);
 
 		/*These lines are all chart setup.  Pick and choose which chart features you want to utilize. */
 	nv.addGraph(function() {
