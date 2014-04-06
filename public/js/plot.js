@@ -22,7 +22,7 @@ function d3_plot (data, type) {
 	      .tickFormat(d3.format(',r'));
 
 	  chart.yAxis     //Chart y-axis settings
-	      .axisLabel('Voltage (v)')
+	      .axisLabel('Food')
 	      .tickFormat(d3.format('.02f'));
 
 	  d3.select('#chart svg')    //Select the <svg> element you want to render the chart in.   
