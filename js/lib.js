@@ -21,6 +21,7 @@ var env = {
 		e: math.e,
 		pi: math.pi,
 		i: math.sqrt(-1),
+		inf: Infinity,
 		//{% endif %}
 		},
 	
