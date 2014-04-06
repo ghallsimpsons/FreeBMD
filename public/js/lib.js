@@ -228,10 +228,10 @@ function exec_statement( line ){
 				}
 			}
 			if(data['x'].hasOwnProperty('_data')){
-				data['x'] = data['x']._data);
+				data['x'] = data['x']._data;
 				}
 			if(data['y'].hasOwnProperty('_data')){
-				data['y'] = data['y']._data);
+				data['y'] = data['y']._data;
 				console.log("I did something");
 				}
 			console.log(data, type);
