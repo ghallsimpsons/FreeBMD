@@ -124,10 +124,33 @@
 	});
 
 	$('#plot_test').click(function() {
-		var data = [];
-		data.x = [1, 2, 3, 4, 5, 6, 7, 8];
-	    data.y = [12, 42, 12, 51, 12, 14, 52, 12];
-		d3_plot(data,'line');
+		var data = [{ 
+					key:'Line 1',
+					values: [
+						{x:1,y:2},
+						{x:2,y:3},
+						{x:3,y:2},
+						{x:4,y:3},
+						{x:5,y:2},
+						{x:6,y:3},
+						{x:7,y:2},
+						{x:8,y:3}],
+					color: '#ff7f0e'
+				},
+				{
+					key:'Line 2',
+					values: [
+						{x:1,y:5},
+						{x:2,y:3},
+						{x:3,y:8},
+						{x:4,y:9},
+						{x:5,y:3},
+						{x:6,y:4},
+						{x:7,y:5},
+						{x:8,y:6}],
+					color: '#2ca02c'
+				}];
+		var chart = d3_plot(data,'line');
 
 		// xAxisTitle('Time', chart);
 		// yAxisTitle('Dudes in the Room', chart);

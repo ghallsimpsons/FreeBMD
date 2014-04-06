@@ -1,16 +1,6 @@
 function d3_plot (data, type) {
-	var myData = [];
-	console.log('data is: '+data);
-	if(data.x.length == data.y.length){
-		for(var i =0; i < data.y.length; i++) {
-			myData.push({x: data.x[i], y: data.y[i]});
-		}
-	}
-	else {
-		return "Error: matrix dimensions must agree";
-	}
 
-	console.log('myData is: '+myData);
+	console.log('data is: '+data);
 
 	/*These lines are all chart setup.  Pick and choose which chart features you want to utilize. */
 	  var chart = nv.models.lineChart()
@@ -31,7 +21,7 @@ function d3_plot (data, type) {
 	      .tickFormat(d3.format('.02f'));
 
 	  d3.select('#chart svg')    //Select the <svg> element you want to render the chart in.   
-	      .datum(myData)         //Populate the <svg> element with chart data...
+	      .datum(data)         //Populate the <svg> element with chart data...
 	      .call(chart);          //Finally, render the chart!
 
 	  //Update the chart when window resizes.
