@@ -3,11 +3,6 @@ var math=mathjs();
 var parse_helper={};
 
 var env = {
-	'uid': false,
-	
-	'secret': false,	
-
-	'token': false,
 	
 	'tabs': [
 				{

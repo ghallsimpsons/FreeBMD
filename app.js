@@ -5,6 +5,7 @@ var app = express();
 
 var connString = 'postgres://zntxnoglkwslwi:yOyhl4tIsGg1FzI4u0wTchC0HU@ec2-54-204-38-16.compute-1.amazonaws.com:5432/desc87qe0bn276';
 
+app.use(express.bodyParser());
 
 app.use("/",
      express.static(__dirname)
@@ -14,18 +15,25 @@ app.post('/save', function(request, response) {
 	// if(request.method == 'POST') {
 	console.log("[200]" + request.method + "to" + request.url);
 
-	request.on('data', function(chunk) {
-		console.log("Recieved body data:");
-		console.log(chunk.toString());
+	console.log(request.body);
+
+	pg.connect(connString, function(err, client, done) {
+		if(err) response.send("Could not connect to DB: " + err);
+
+		client.query('UPDATE sessions SET environment=$1 WHERE secret = $2', [request.body, secret], function(err, result) {
+			done();
+			if(err) return response.send(err);
+			response.writeHead(200, "OK", {'Content-Type': 'text/html'});
+		    response.end();
+		});
 	});
 
-	response.writeHead(200, "OK", {'Content-Type':'text/html'});
-	response.end();
-	// } else {
-	// 	console.log("[405]" + request.method + "to" + request.url);
-	// 	response.writeHead(405, "Method not supported", {'Content-Type': 'text/html'});
-	//     response.end('<html><head><title>405 - Method not supported</title></head><body><h1>Method not supported.</h1></body></html>');
- //  	}
+	// req.on('end', function() {
+    
+      // request ended -> do something with the data
+    
+    // });
+
 });
 
 app.get('/:secret', function(request, response) {
