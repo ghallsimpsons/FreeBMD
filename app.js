@@ -28,12 +28,6 @@ app.post('/save', function(request, response) {
 		});
 	});
 
-	// req.on('end', function() {
-    
-      // request ended -> do something with the data
-    
-    // });
-
 });
 
 app.get('/:secret', function(request, response) {
