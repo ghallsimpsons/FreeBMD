@@ -8,13 +8,15 @@
 	<script type="text/javascript" src="js/jquery-1.11.0.min.js"></script>
 	<script type="text/javascript" src="js/math.js"></script> <!-- Import Math.js library - mathjs.org -->
 	<script type="text/javascript" src="js/lib.js"></script> <!-- Main library for FreeBMD -->
+	<script type="text/javascript" src="js/plot.js"></script> <!-- Plotting library for FreeBMD -->
+	
 	<script type="text/javascript" src="components/jq-console/jqconsole.min.js"></script><!-- JQ Console for the console window -->
 	<script src="components/codemirror/codemirror.js"></script>
 	<script src="components/codemirror/octave/octave.js"></script>
 	<link rel="stylesheet" href="components/codemirror/codemirror.css">
 	<link rel="stylesheet" href="components/codemirror/mdn-like.css"><!-- CodeMirror for Editor -->
 </head>
-<body onload="load_locals()">
+<body>
 	<nav class="navbar navbar-default" role="navigation">
 	  <div class="container-fluid">
 	    <!-- Brand and toggle get grouped for better mobile display -->
@@ -43,6 +45,8 @@
 		<div class="col-md-2">
 			<h3>Welcome to FreeBMD</h3>
 			<p>Created by Grant, RJ and Brendan of Team Berkeley at Big Hack 2014.</p>
+
+			<button id="plot_test" class="btn btn-default">PLOT THIS SHIT?</button>
 			
 		</div>
 		<div class="col-md-10">
@@ -100,14 +104,28 @@
 	    e.preventDefault();
 	});
 
-	$('#button').click(function(e) {
+	$('#plot_test').click(function(e) {
 		e.preventDefault();
 
-		// Output using MathJS
-		$('#output').append(math.eval($('#tester').val()) + '<br/>');
-
-		// Parse the string
-		var input = bmd.parse($('tester').val());	
+		var data = [{ 
+						key:'Line 1',
+						values: {
+							x: [1, 2, 3, 4, 5, 6, 7, 8],
+							y: [12, 42, 12, 51, 12, 14, 52, 12]
+						},
+						color: '#ff7f0e'
+					},
+					{
+						key:'Line 2',
+						values: {
+							x: [1, 2, 3, 4, 5, 6, 7, 8],
+							y: [7, 12, 3, 0, 9, 14, 6, 6]
+						},
+						color: '#2ca02c'
+					}];
+		var chart = d3_plot(data,'line');
+		xAxisTitle('Time', chart);
+		yAxisTitle('Dudes in the Room', chart);
 
 	});
 

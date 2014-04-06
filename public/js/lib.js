@@ -33,36 +33,13 @@ var env = {
 
 function load_locals(){
 	for (var localvar in env.vars){
+		try{
+		if(env.vars[localvar].val.hasOwnProperty('_data')){
+			var m = math.matrix(env.vars[localvar].val._data);
+			env.vars[localvar].val = m;
+		}} catch(e){}
 		math[localvar]=env.vars[localvar].val;
 	}
-}
-
-function d3_plot(x, y, lineStyle, chartStyle) {
-	nv.addGraph(function() {
-	  var chart = nv.models.lineChart()
-	    .useInteractiveGuideline(true)
-	    ;
-
-	  chart.xAxis
-	    .axisLabel('Time (ms)')
-	    .tickFormat(d3.format(',r'))
-	    ;
-
-	  chart.yAxis
-	    .axisLabel('Voltage (v)')
-	    .tickFormat(d3.format('.02f'))
-	    ;
-
-	  d3.select('#chart svg')
-	    .datum(data())
-	    .transition().duration(500)
-	    .call(chart)
-	    ;
-
-	  nv.utils.windowResize(chart.update);
-
-	  return chart;
-	});
 }
 	
 function isBareword( word ){
@@ -269,14 +246,14 @@ function exec_statement( line ){
 			varname=split_line.slice(0,split_line.indexOf('=')).join('');
 			tmpvar={};
 			expr=split_line.slice(split_line.indexOf('=')+1);
-				if(has_semantic_block(split_line,'[',0)){
-expr=structure_array(expr);
-}
-tmpvar['val'] = eval_expr( expr.join('') );
-tmpvar['type']='scalar';
-env.vars[varname]=tmpvar;
-math[varname]=tmpvar.val;
-return env.vars[varname]['val'];
+			if(has_semantic_block(split_line,'[',0)){
+				expr=structure_array(expr);
+			}
+			tmpvar['val'] = eval_expr( expr.join('') );
+			tmpvar['type']='scalar';
+			env.vars[varname]=tmpvar;
+			math[varname]=tmpvar.val;
+			return env.vars[varname]['val'];
 			}
 			//else if( /*obj_prop*/ ){
 				
