@@ -160,7 +160,7 @@
 		  chart.yAxis     //Chart y-axis settings
 		      .axisLabel('Voltage (v)')
 		      .tickFormat(d3.format('.02f'));
-		      
+		  console.log(data);    
 		  d3.select('#chart svg')    //Select the <svg> element you want to render the chart in.   
 		      .datum(data)         //Populate the <svg> element with chart data...
 		      .call(chart);          //Finally, render the chart!
