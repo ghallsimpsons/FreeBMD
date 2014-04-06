@@ -280,3 +280,10 @@ function eval_expr( expr ){
 	catch(err){ return expr };
 }
 
+function run_file(tab){//tab is an int
+	mycode=env.tabs[tab].code;
+	mycode=mycode.split('\n');
+	for (var line in mycode){
+		exec_statement(mycode[line]);
+	}
+}
