@@ -27,8 +27,8 @@ app.post('/save', function(request, response) {
 	// });
 	request.on('end', function() {
 		console.log(fullBody);
-	    //var decodedBody = JSON.parse(fullBody);
-	    //console.log(decodedBody);
+	    var decodedBody = JSON.parse(fullBody);
+	    console.log(decodedBody);
 
 		response.writeHead(200, "OK", {'Content-Type':'text/html'});
 		response.end();
