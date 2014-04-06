@@ -47,7 +47,7 @@ function isBareword( word ){
 }
 
 function isScalar( word ){
-	if(word.match(/^(\w|[\.\+\-\/\*\(\)\[\]])*$/)) return true; else return false;
+	if(word.match(/^(\w|[\.\+\-\/\*\(\)])*$/)) return true; else return false;
 }
 	
 function flatten(array) {
@@ -65,27 +65,28 @@ function next_semantic_block( obj, index ){
 	//Returns the start and end index of the next semantic block [start,end]
 	var start_ind;
 	var blocked='';
+	var depth=0;
 	for(var i=index; i<obj.length; i++){
 		if(blocked){
 			switch(blocked)
 			{
 				case '[':
-					if(obj[i]==']') return [start_ind, i+1];
+					if(obj[i]==']') if(--depth==0) return [start_ind, i+1];
 					break;
 				case '(':
-					if(obj[i]==')') return [start_ind, i+1];
+					if(obj[i]==')') if(--depth==0) return [start_ind, i+1];
 					break;
 				case '{':
-					if(obj[i]=='}') return [start_ind, i+1];
+					if(obj[i]=='}') if(--depth==0) return [start_ind, i+1];
 					break;
 			}
 		}
 		else if (isBareword(obj[i])) return [i,i+1];
-		else {
-			if (obj[i]=='['){ blocked='['; start_ind=i; }
-			else if(obj[i]=='('){ blocked='('; start_ind=i; }
-			else if(obj[i]=='{'){ blocked='{'; start_ind=i; }
-		}
+		//Check for blocking every pass and dive in!
+		if (obj[i]=='['){ blocked='['; if(depth++==0) start_ind=i;}
+		else if(obj[i]=='('){ blocked='('; if(depth++==0) start_ind=i;}
+		else if(obj[i]=='{'){ blocked='{'; if(depth++==0) start_ind=i;}
+		
 	}
 	return false;
 }
