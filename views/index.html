@@ -123,28 +123,10 @@
 	    e.preventDefault();
 	});
 
-	$('#plot_test').click(function(e) {
-		e.preventDefault();
-
-		var data = [{ 
-						key:'Line 1',
-						values: {
-							x: [1, 2, 3, 4, 5, 6, 7, 8],
-							y: [12, 42, 12, 51, 12, 14, 52, 12]
-						},
-						color: '#ff7f0e'
-					},
-					{
-						key:'Line 2',
-						values: {
-							x: [1, 2, 3, 4, 5, 6, 7, 8],
-							y: [7, 12, 3, 0, 9, 14, 6, 6]
-						},
-						color: '#2ca02c'
-					}];
+	$('#plot_test').click(function() {
 		//var chart = d3_plot(data,'line');
 
-		nv.addGraph(function(data) {
+		nv.addGraph(function() {
 		  var chart = nv.models.lineChart()
 		                .margin({left: 100})  //Adjust chart margins to give the x-axis some breathing room.
 		                .useInteractiveGuideline(true)  //We want nice looking tooltips and a guideline!
@@ -160,6 +142,22 @@
 		  chart.yAxis     //Chart y-axis settings
 		      .axisLabel('Voltage (v)')
 		      .tickFormat(d3.format('.02f'));
+	      var data = [{ 
+					key:'Line 1',
+					values: {
+						x: [1, 2, 3, 4, 5, 6, 7, 8],
+						y: [12, 42, 12, 51, 12, 14, 52, 12]
+					},
+					color: '#ff7f0e'
+				},
+				{
+					key:'Line 2',
+					values: {
+						x: [1, 2, 3, 4, 5, 6, 7, 8],
+						y: [7, 12, 3, 0, 9, 14, 6, 6]
+					},
+					color: '#2ca02c'
+				}];
 		  console.log(data);    
 		  d3.select('#chart svg')    //Select the <svg> element you want to render the chart in.   
 		      .datum(data)         //Populate the <svg> element with chart data...
