@@ -1,0 +1,1 @@
+CREATE TABLE sessions (id int NOT NULL, token varchar(255), secret varchar(10), environment text, time_created DATE, time_edited DATE)
