@@ -14,7 +14,7 @@ app.use(express.static(__dirname + '/public'));
 app.use(express.bodyParser());
 
 app.get('/', function(request, response) {
-	return response.render('index', {name: 1});
+	return response.render('index', {env: null});
 });
 
 app.post('/save', function(request, response) {
