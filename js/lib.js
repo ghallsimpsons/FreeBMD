@@ -30,6 +30,8 @@ var env = {
 	};
 
 var binary_ops = ['+', '-', '*', '/', '^', '&', '|', '&&', '||'];
+var comparison_ops = ['>','<','<=','>=','==','~=',];
+
 
 function flatten(array) {
   var result = [], self = arguments.callee;
