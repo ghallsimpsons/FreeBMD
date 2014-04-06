@@ -12,7 +12,7 @@ app.use("/",
 
 app.get('/save', function(request, response) {
 	if(request.method == 'POST') {
-		console.log("[200]" + req.method + "to" + req.url);
+		console.log("[200]" + request.method + "to" + request.url);
 
 		request.on('data', function(chunk) {
 			console.log("Recieved body data:");
@@ -22,7 +22,7 @@ app.get('/save', function(request, response) {
 		response.writeHead(200, "OK", {'Content-Type':'text/html'});
 		response.end();
 	} else {
-		console.log("[405]" + req.method + "to" + req.url);
+		console.log("[405]" + request.method + "to" + request.url);
 		response.writeHead(405, "Method not supported", {'Content-Type': 'text/html'});
 	    response.end('<html><head><title>405 - Method not supported</title></head><body><h1>Method not supported.</h1></body></html>');
   	}
