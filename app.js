@@ -46,6 +46,7 @@ app.get('/:secret', function(request, response) {
 			if(err) return response.send(err);
 			if(result.rows.length == 0) return response.redirect("/");
 			var environment = result.rows[0];
+			console.log(environment);
 			return response.render('index',{env: environment});
 		});
 	});
