@@ -31,6 +31,10 @@ app.use(
 app.get('/:secret', function(request, response) {
 	pg.connect(connString, function(err, client, done) {
 		if(err) response.send("Could not connect to DB: " + err);
+
+		client.query('SELECT environment FROM sessions WHERE secret = $1', [secret], function(err, result) {
+			if(err) return response.send(err);
+		});
 	});
 	var secret = request.params.secret;
 	response.send(secret);
