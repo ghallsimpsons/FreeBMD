@@ -5,7 +5,7 @@ var app = express();
 
 var connString = 'postgres://zntxnoglkwslwi:yOyhl4tIsGg1FzI4u0wTchC0HU@ec2-54-204-38-16.compute-1.amazonaws.com:5432/desc87qe0bn276';
 
-app.use(express.json());
+app.use(express.bodyParser());
 
 app.use("/",
      express.static(__dirname)
@@ -15,7 +15,8 @@ app.post('/save', function(request, response) {
 	// if(request.method == 'POST') {
 	console.log("[200]" + request.method + "to" + request.url);
 
-	console.log(request.body.secret);
+	console.log(request.body);
+
 });
 
 app.get('/:secret', function(request, response) {
