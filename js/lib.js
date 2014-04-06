@@ -32,6 +32,7 @@ var env = {
 		'inf': {
 			'type': 'scalar',
 			'val': math.Infinity,
+			},
 		},
 	};
 
