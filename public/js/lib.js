@@ -226,8 +226,40 @@ function exec_statement( line ){
 		if(split_line[0]=="for"){
 			
 		}
+		else if(split_line[0]=="dplot"){
+			var i=1;
+			var data={};
+			var type='line';
+			for(;i<split_line.length; i++){
+				if (split_line[i]=='(') break;
+			}
+			for(;i<split_line.length; i++){
+				if (isBareword(split_line[i])){
+					data['x']=math[split_line[i]];
+					break;}
+			}
+			for(;i<split_line.length; i++){
+				if(isBareword(split_line[i])){
+				data['y']=math[split_line[i]];
+					break;}
+			}
+			for(;i<split_line.length; i++){
+				if(typeof split_line[i] == 'string'){
+					if (split_line[i]=='.') type='scatter';
+				}
+			}
+			console.log(data, type);
+			d3_plot(data,type);
+		}
 		else if(split_line[0]=="plot"){
-
+			args = next_semantic_block(split_line, has_semantic_block(split_line, '(', 0));
+			datas=[]; styles=[];
+			data_num=0;
+			for( var i=args[0]; i<var.args-1; i++){
+				if (datas[0]){
+					if (datas['x']){
+						if(datas['y']
+			d3_plot(data,style);
 		}
 
 		else if (split_line.indexOf('=')>0 && split_line[split_line.indexOf('=')+1]!='=' && split_line[split_line.indexOf('=')-1]!='<' && split_line[split_line.indexOf('=')-1]!='>' && split_line[split_line.indexOf('=')-1]!='~'){
@@ -242,7 +274,7 @@ function exec_statement( line ){
 			tmpvar['val'] = eval_expr( expr.join('') );
 			tmpvar['type']='scalar';
 			if(tmpvar.val.hasOwnProperty("_data")
-				env.vars[varname]=tmpvar._data;S
+				env.vars[varname]=tmpvar._data;
 			else env.vars[varname]=tmpvar;
 			math[varname]=tmpvar.val;
 			return env.vars[varname]['val'];
