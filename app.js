@@ -5,6 +5,7 @@ var app = express();
 
 var connString = 'postgres://zntxnoglkwslwi:yOyhl4tIsGg1FzI4u0wTchC0HU@ec2-54-204-38-16.compute-1.amazonaws.com:5432/desc87qe0bn276';
 
+app.use(express.json());
 
 app.use("/",
      express.static(__dirname)
@@ -14,30 +15,7 @@ app.post('/save', function(request, response) {
 	// if(request.method == 'POST') {
 	console.log("[200]" + request.method + "to" + request.url);
 
-	var fullBody = '';
-    
-    request.on('data', function(chunk) {
-      // append the current chunk of data to the fullBody variable
-      fullBody += chunk.toString();
-    });
-    
-	// request.on('data', function(chunk) {
-	// 	console.log("Recieved body data:");
-	// 	console.log(chunk.toString());
-	// });
-	request.on('end', function() {
-		console.log(fullBody);
-	    var decodedBody = JSON.parse(fullBody);
-	    console.log(decodedBody);
-
-		response.writeHead(200, "OK", {'Content-Type':'text/html'});
-		response.end();
-	});
-	// } else {
-	// 	console.log("[405]" + request.method + "to" + request.url);
-	// 	response.writeHead(405, "Method not supported", {'Content-Type': 'text/html'});
-	//     response.end('<html><head><title>405 - Method not supported</title></head><body><h1>Method not supported.</h1></body></html>');
- //  	}
+	console.log(request.body.secret);
 });
 
 app.get('/:secret', function(request, response) {
