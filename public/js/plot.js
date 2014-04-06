@@ -1,6 +1,9 @@
 function d3_plot (data, type) {
-
-	console.log('data is: '+data);
+	var p=[];
+	for(var i in data.x){
+		p.push({'x':data.x[i], 'y':data.y[i]});
+	}
+	console.log('data is: '+p);
 
 	/*These lines are all chart setup.  Pick and choose which chart features you want to utilize. */
 	  var chart = nv.models.lineChart()
@@ -21,7 +24,7 @@ function d3_plot (data, type) {
 	      .tickFormat(d3.format('.02f'));
 
 	  d3.select('#chart svg')    //Select the <svg> element you want to render the chart in.   
-	      .datum(data)         //Populate the <svg> element with chart data...
+	      .datum(p)         //Populate the <svg> element with chart data...
 	      .call(chart);          //Finally, render the chart!
 
 	  //Update the chart when window resizes.
