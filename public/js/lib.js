@@ -241,7 +241,9 @@ function exec_statement( line ){
 			}
 			tmpvar['val'] = eval_expr( expr.join('') );
 			tmpvar['type']='scalar';
-			env.vars[varname]=tmpvar;
+			if(tmpvar.val.hasOwnProperty("_data")
+				env.vars[varname]=tmpvar._data;S
+			else env.vars[varname]=tmpvar;
 			math[varname]=tmpvar.val;
 			return env.vars[varname]['val'];
 			}
