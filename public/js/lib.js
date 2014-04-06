@@ -35,7 +35,7 @@ function load_locals(){
 	for (var localvar in env.vars){
 		if(env.vars[localvar].val.hasOwnProperty('_data')){
 			var m = math.matrix(env.vars[localvar].val._data);
-			env.vars[localvar]val = m;
+			env.vars[localvar].val = m;
 		}
 		math[localvar]=env.vars[localvar].val;
 	}
