@@ -60,6 +60,8 @@
     	window.env = {{{env}}};
     {{/env}}
 
+    load_locals();
+
     $(function () {
     	window.onbeforeunload = confirmExit;
 	    function confirmExit() {
