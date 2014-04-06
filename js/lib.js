@@ -74,9 +74,6 @@ function tokenize( line, tokens ){
 }
 
 function exec_statement( line ){
-	if( ) {
-
-	}
-	math.eval(line);
+	return math.eval(line);
 }
 
