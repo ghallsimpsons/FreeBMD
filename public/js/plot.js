@@ -1,6 +1,6 @@
 function d3_plot (data, type) {
 	var myData = [];
-	console.log(data);
+	console.log('data is: '+data);
 	if(data.x.length == data.y.length){
 		for(var i =0; i < data.y.length; i++) {
 			myData.push({x: data.x[i], y: data.y[i]});
@@ -10,7 +10,7 @@ function d3_plot (data, type) {
 		return "Error: matrix dimensions must agree";
 	}
 
-	console.log(myData);
+	console.log('myData is: '+myData);
 
 	/*These lines are all chart setup.  Pick and choose which chart features you want to utilize. */
 	  var chart = nv.models.lineChart()
