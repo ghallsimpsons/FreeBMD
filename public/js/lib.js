@@ -33,10 +33,11 @@ var env = {
 
 function load_locals(){
 	for (var localvar in env.vars){
+		try{
 		if(env.vars[localvar].val.hasOwnProperty('_data')){
 			var m = math.matrix(env.vars[localvar].val._data);
 			env.vars[localvar].val = m;
-		}
+		}} catch(e){}
 		math[localvar]=env.vars[localvar].val;
 	}
 }
