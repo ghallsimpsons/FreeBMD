@@ -258,7 +258,7 @@ function exec_statement( line ){
 			for( var i=args[0]; i<var.args-1; i++){
 				if (datas[0]){
 					if (datas['x']){
-						if(datas['y']
+						if(datas['y']}}}
 			d3_plot(data,style);
 		}
 
