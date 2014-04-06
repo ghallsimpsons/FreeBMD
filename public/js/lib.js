@@ -47,7 +47,7 @@ function isBareword( word ){
 }
 
 function isScalar( word ){
-	if(word.match(/^(\w|[\.\+\-\/\*\(\)\[\]])*$/)) return true; else return false;
+	if(word.match(/^(\w|[\.\+\-\/\*\(\)])*$/)) return true; else return false;
 }
 	
 function flatten(array) {
@@ -65,27 +65,28 @@ function next_semantic_block( obj, index ){
 	//Returns the start and end index of the next semantic block [start,end]
 	var start_ind;
 	var blocked='';
+	var depth=0;
 	for(var i=index; i<obj.length; i++){
 		if(blocked){
 			switch(blocked)
 			{
 				case '[':
-					if(obj[i]==']') return [start_ind, i+1];
+					if(obj[i]==']') if(--depth==0) return [start_ind, i+1];
 					break;
 				case '(':
-					if(obj[i]==')') return [start_ind, i+1];
+					if(obj[i]==')') if(--depth==0) return [start_ind, i+1];
 					break;
 				case '{':
-					if(obj[i]=='}') return [start_ind, i+1];
+					if(obj[i]=='}') if(--depth==0) return [start_ind, i+1];
 					break;
 			}
 		}
 		else if (isBareword(obj[i])) return [i,i+1];
-		else {
-			if (obj[i]=='['){ blocked='['; start_ind=i; }
-			else if(obj[i]=='('){ blocked='('; start_ind=i; }
-			else if(obj[i]=='{'){ blocked='{'; start_ind=i; }
-		}
+		//Check for blocking every pass and dive in!
+		if (obj[i]=='['){ blocked='['; if(depth++==0) start_ind=i;}
+		else if(obj[i]=='('){ blocked='('; if(depth++==0) start_ind=i;}
+		else if(obj[i]=='{'){ blocked='{'; if(depth++==0) start_ind=i;}
+		
 	}
 	return false;
 }
@@ -203,8 +204,41 @@ function exec_statement( line ){
 		if(split_line[0]=="for"){
 			
 		}
+		else if(split_line[0]=="dplot"){
+			var i=1;
+			var data={};
+			var type='line';
+			for(;i<split_line.length; i++){
+				if (split_line[i]=='(') break;
+			}
+			for(;i<split_line.length; i++){
+				if (isBareword(split_line[i])){
+					data['x']=math[split_line[i]]._data;
+					i++;
+					break;}
+			}
+			for(;i<split_line.length; i++){
+				if(isBareword(split_line[i])){
+				data['y']=math[split_line[i]]._data;
+					break;}
+			}
+			for(;i<split_line.length; i++){
+				if(typeof split_line[i] == 'string'){
+					if (split_line[i]=='.') type='scatter';
+				}
+			}
+			console.log(data, type);
+			d3_plot(data,type);
+		}
 		else if(split_line[0]=="plot"){
-
+			args = next_semantic_block(split_line, has_semantic_block(split_line, '(', 0));
+			datas=[]; styles=[];
+			data_num=0;
+			for( var i=args[0]; i<args[1]-1; i++){
+				if (datas[0]){
+					if (datas['x']){
+						if(datas['y']){}}}}
+			d3_plot(data,style);
 		}
 
 		else if (split_line.indexOf('=')>0 && split_line[split_line.indexOf('=')+1]!='=' && split_line[split_line.indexOf('=')-1]!='<' && split_line[split_line.indexOf('=')-1]!='>' && split_line[split_line.indexOf('=')-1]!='~'){
