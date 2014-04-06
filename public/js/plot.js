@@ -1,10 +1,11 @@
 function d3_plot (data, type) {
-	var myData= {};
-	myData.values = [];
+	var myData= [];
+	myData[0] = {};
+	myData[0].values = [];
 	for(var i in data.x){
-		myData.values.push({'x':data.x[i], 'y':data.y[i]});
+		myData[0].values.push({'x':data.x[i], 'y':data.y[i]});
 	}
-	console.log('data is: '+myData);
+	console.log('data is: '+myData[0].values);
 
 	/*These lines are all chart setup.  Pick and choose which chart features you want to utilize. */
 	  var chart = nv.models.lineChart()
