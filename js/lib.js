@@ -85,11 +85,13 @@ function next_semantic_block( obj, index ){
 
 var binary_ops = ['+', '-', '*', '/', '^', '&', '|', '&&', '||'];
 var comparison_ops = ['>','<'];
-var specials = [',', '=', '[', ']', ';', '~', '(', ')'];
+var specials = [',', '=', ';', '~', ' '];
+var blockers = ['[', ']', '(', ')', '{', '}'];
 
 var all_tokens = binary_ops;
 all_tokens.push(comparison_ops);
 all_tokens.push(specials);
+all_tokens.push(blockers);
 all_tokens = flatten(all_tokens);
 
 function preparse( str ){
