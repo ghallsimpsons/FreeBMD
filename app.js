@@ -15,24 +15,18 @@ app.post('/save', function(request, response) {
 	// if(request.method == 'POST') {
 	console.log("[200]" + request.method + "to" + request.url);
 
-	console.log(request.body);
+	console.log(request.body.secret + '\n' + request.body.env);
 
 	pg.connect(connString, function(err, client, done) {
 		if(err) response.send("Could not connect to DB: " + err);
 
-		client.query('UPDATE sessions SET environment=$1 WHERE secret = $2', [request.body, secret], function(err, result) {
+		client.query('UPDATE sessions SET environment=$1 WHERE secret = $2', [request.body.env, request.body.secret], function(err, result) {
 			done();
 			if(err) return response.send(err);
 			response.writeHead(200, "OK", {'Content-Type': 'text/html'});
 		    response.end();
 		});
 	});
-
-	// req.on('end', function() {
-    
-      // request ended -> do something with the data
-    
-    // });
 
 });
 

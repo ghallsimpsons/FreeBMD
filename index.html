@@ -105,14 +105,14 @@
 		var data = {
 			'secret':'1234',
 			'token':'asdfqwer',
-			'env':env
+			'env':JSON.stringify(env)
 		};
 		var success = function(data, textStatus, jqXHR) {alert('Saved successfully.')};
 		var url = '/save';
 		$.ajax({
 			type:"POST",
 			url: url,
-			data: JSON.stringify(data),
+			data: data,
 			success: success,
 			dataType: 'html'
 		});
