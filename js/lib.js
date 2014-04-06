@@ -30,7 +30,7 @@ var env = {
 			},
 		'i': {
 			'type': 'scalar',
-			'val': math.sqrt(-1),
+			'val': math.i,
 			},
 		//{% endif %}
 		},
