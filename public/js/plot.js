@@ -39,10 +39,7 @@ function d3_plot_data(data) {
 
 function d3_plot (data, type) {
 
-	myDataFun = d3_plot_data(data);
-
 		/*These lines are all chart setup.  Pick and choose which chart features you want to utilize. */
-	nv.addGraph(function() {
 	  var chart = nv.models.lineChart()
 	                .margin({left: 100})  //Adjust chart margins to give the x-axis some breathing room.
 	                .useInteractiveGuideline(true)  //We want nice looking tooltips and a guideline!
@@ -61,7 +58,7 @@ function d3_plot (data, type) {
 	      .tickFormat(d3.format('.02f'));
 
 	  /* Done setting the chart up? Time to render it!*/
-	  var myData = myDataFun();   //You need data...
+	  var myData = data;   //You need data...
 
 	  d3.select('#chart svg')    //Select the <svg> element you want to render the chart in.   
 	      .datum(myData)         //Populate the <svg> element with chart data...
@@ -70,8 +67,6 @@ function d3_plot (data, type) {
 	  //Update the chart when window resizes.
 	  nv.utils.windowResize(function() { chart.update() });
 	  return chart;
-	});
-
 }
 	
 
