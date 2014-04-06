@@ -33,7 +33,9 @@ app.get('/:secret', function(request, response) {
 		if(err) response.send("Could not connect to DB: " + err);
 
 		client.query('SELECT environment FROM sessions WHERE secret = $1', [secret], function(err, result) {
+			done();
 			if(err) return response.send(err);
+			response.send(result.rows);
 		});
 	});
 	var secret = request.params.secret;
