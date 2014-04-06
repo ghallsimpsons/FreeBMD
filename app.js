@@ -39,7 +39,8 @@ app.get('/:secret', function(request, response) {
 			done();
 			if(err) return response.send(err);
 			if(result.rows.length == 0) return response.redirect("/");
-			return response.send(result.rows[0]);
+			var environment = result.rows[0];
+			return response.render('index.html',{env: environment});
 		});
 	});
 });
