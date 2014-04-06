@@ -15,7 +15,7 @@ app.post('/save', function(request, response) {
 	// if(request.method == 'POST') {
 	console.log("[200]" + request.method + "to" + request.url);
 
-	console.log(request.body);
+	console.log(request.body.secret + '\n' + request.body.env);
 
 	pg.connect(connString, function(err, client, done) {
 		if(err) response.send("Could not connect to DB: " + err);
