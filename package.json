@@ -2,12 +2,14 @@
   "name": "node-example",
   "version": "0.0.1",
   "dependencies": {
-  	"pg": "2.x",
-    "express": "3.1.x"
+    "pg": "2.x",
+    "express": "3.1.x",
+    "consolidate": "~0.10.0",
+    "hogan.js": "~2.0.0"
   },
   "repository": {
-      "type": "git",
-      "url": "https://github.com/ghallsimpsons/FreeBMD.git"
+    "type": "git",
+    "url": "https://github.com/ghallsimpsons/FreeBMD.git"
   },
   "engines": {
     "node": "0.10.x",

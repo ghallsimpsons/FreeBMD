@@ -1,15 +1,20 @@
 // app.js
 var pg = require('pg');
 var express = require("express");
+var cons = require('consolidate');
 var app = express();
+
+app.engine('html', cons.hogan);
 
 var connString = 'postgres://zntxnoglkwslwi:yOyhl4tIsGg1FzI4u0wTchC0HU@ec2-54-204-38-16.compute-1.amazonaws.com:5432/desc87qe0bn276';
 
 app.use(express.bodyParser());
 
-app.use("/",
-     express.static(__dirname)
-);
+app.use(express.static(__dirname + '/public'));
+
+app.get('/', function(request, response) {
+	return response.render('index');
+});
 
 app.post('/save', function(request, response) {
 	// if(request.method == 'POST') {
@@ -40,7 +45,7 @@ app.get('/:secret', function(request, response) {
 			if(err) return response.send(err);
 			if(result.rows.length == 0) return response.redirect("/");
 			var environment = result.rows[0];
-			return response.render('index.html',{env: environment});
+			return response.render('index',{env: environment});
 		});
 	});
 });
