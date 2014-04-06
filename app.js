@@ -29,6 +29,7 @@ app.use(
 );
 
 app.get('/:secret', function(request, response) {
+	var secret = request.params.secret;
 	pg.connect(connString, function(err, client, done) {
 		if(err) response.send("Could not connect to DB: " + err);
 
@@ -38,8 +39,7 @@ app.get('/:secret', function(request, response) {
 			response.send(result.rows);
 		});
 	});
-	var secret = request.params.secret;
-	response.send(secret);
+	//response.send(secret);
 });
 
 var port = Number(process.env.PORT || 5000);
