@@ -31,7 +31,7 @@ app.post('/save', function(request, response) {
 
 		response.writeHead(200, "OK", {'Content-Type':'text/html'});
 		response.end();
-	}
+	});
 	// } else {
 	// 	console.log("[405]" + request.method + "to" + request.url);
 	// 	response.writeHead(405, "Method not supported", {'Content-Type': 'text/html'});
