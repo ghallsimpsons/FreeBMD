@@ -53,6 +53,7 @@
 			<h4>Sharing Ready</h4>
 			<p>Just send your fellow engineer, scientist, or professor your unique URL.</p>
 
+			<button id="run_editor" class="btn btn-default">Run</button>
 			<!--<button id="plot_test" class="btn btn-default" data-toggle="modal" data-target="#chart-modal">Example Plot</button>-->
 			
 		</div>
@@ -194,6 +195,11 @@
 		// xAxisTitle('Time', chart);
 		// yAxisTitle('Dudes in the Room', chart);
 
+	});
+
+	$('#run').click(function() {
+		env['tabs'][0].code = codemir.getValue();
+		run_file(0);
 	});
 
 	$('#save').click(function() {
