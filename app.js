@@ -26,8 +26,9 @@ app.post('/save', function(request, response) {
 	// 	console.log(chunk.toString());
 	// });
 	request.on('end', function() {
-	    var decodedBody = JSON.parse(fullBody);
-	    console.log(decodedBody);
+		console.log(fullBody);
+	    //var decodedBody = JSON.parse(fullBody);
+	    //console.log(decodedBody);
 
 		response.writeHead(200, "OK", {'Content-Type':'text/html'});
 		response.end();
