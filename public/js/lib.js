@@ -247,7 +247,7 @@ function exec_statement( line ){
 					if (datas['x']){
 						if(datas['y']){}}}}
 			chart = d3_plot(data,style);
-			setTimeout(500, chart.update());
+			setTimeout(10000, chart.update());
 		}
 
 		else if (split_line.indexOf('=')>0 && split_line[split_line.indexOf('=')+1]!='=' && split_line[split_line.indexOf('=')-1]!='<' && split_line[split_line.indexOf('=')-1]!='>' && split_line[split_line.indexOf('=')-1]!='~'){
