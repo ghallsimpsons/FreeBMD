@@ -14,10 +14,20 @@ app.post('/save', function(request, response) {
 	// if(request.method == 'POST') {
 	console.log("[200]" + request.method + "to" + request.url);
 
-	request.on('data', function(chunk) {
-		console.log("Recieved body data:");
-		console.log(chunk.toString());
-	});
+	var fullBody = '';
+    
+    request.on('data', function(chunk) {
+      // append the current chunk of data to the fullBody variable
+      fullBody += chunk.toString();
+    });
+    
+	// request.on('data', function(chunk) {
+	// 	console.log("Recieved body data:");
+	// 	console.log(chunk.toString());
+	// });
+
+    var decodedBody = JSON.parse(fullBody);
+    console.log(decodedBody);
 
 	response.writeHead(200, "OK", {'Content-Type':'text/html'});
 	response.end();
