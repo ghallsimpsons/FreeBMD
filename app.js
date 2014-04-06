@@ -17,12 +17,21 @@ app.post('/save', function(request, response) {
 
 	console.log(request.body);
 
+	pg.connect(connString, function(err, client, done) {
+		if(err) response.send("Could not connect to DB: " + err);
+
+		client.query('UPDATE sessions SET environment=$1 WHERE secret = $2', [request.body, secret], function(err, result) {
+			done();
+			if(err) return response.send(err);
+			response.writeHead(200, "OK", {'Content-Type': 'text/html'});
+		    response.end();
+		});
+	});
+
 	// req.on('end', function() {
     
       // request ended -> do something with the data
-    response.writeHead(200, "OK", {'Content-Type': 'text/html'});
-      
-    response.end();
+    
     // });
 
 });
