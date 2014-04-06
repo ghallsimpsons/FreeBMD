@@ -1,9 +1,11 @@
 
 
 function d3_plot (data, type) {
+
+	var chart = ' ';
 	if(type == 'line' || type == null) {
-		nv.addGraph(function(data) {
-		  var chart = nv.models.lineChart()
+		nv.addGraph(function(chart) {
+		  chart = nv.models.lineChart()
 		    .useInteractiveGuideline(true)
 		    ;
 
@@ -17,8 +19,8 @@ function d3_plot (data, type) {
 		});
 	}
 	else if(type == 'scatter') {
-		nv.addGraph(function() {
-		  var chart = nv.models.scatterChart()
+		nv.addGraph(function(chart) {
+		  chart = nv.models.scatterChart()
 		                .showDistX(true)
 		                .showDistY(true)
 		                .color(d3.scale.category10().range());
@@ -27,19 +29,6 @@ function d3_plot (data, type) {
 		  chart.yAxis.tickFormat(d3.format('.02f'));
 
 		});
-	}
-	else if(type == 'bar') {
-		nv.addGraph(function() {
-		  var chart = nv.models.discreteBarChart()
-		    .x(function(d) { return d.label })
-		    .y(function(d) { return d.value })
-		    .staggerLabels(true)
-		    .tooltips(false)
-		    .showValues(true);
-		}
-	}
-	else if(type == 'groupedBar') {
-		 var chart = nv.models.multiBarChart();
 	}
 
 	d3.select('#chart svg')
