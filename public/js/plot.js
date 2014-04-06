@@ -1,5 +1,6 @@
 function d3_plot (data, type) {
-	var myData=[];
+	var myData= {};
+	myData.values = [];
 	for(var i in data.x){
 		myData.values.push({'x':data.x[i], 'y':data.y[i]});
 	}
