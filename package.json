@@ -5,6 +5,10 @@
   	"pg": "2.x",
     "express": "3.1.x"
   },
+  "repository": {
+      "type": "git",
+      "url": "https://github.com/ghallsimpsons/FreeBMD.git"
+  },
   "engines": {
     "node": "0.10.x",
     "npm": "1.2.x"

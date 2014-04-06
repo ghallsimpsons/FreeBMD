@@ -20,7 +20,7 @@ app.get('/:secret', function(request, response) {
 	});
 });
 
-var port = 80;
+var port = 8000;
 app.listen(port, function() {
 	console.log("Listening on " + port);
 });
