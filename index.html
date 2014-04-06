@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" ng-app="eweekApp">
+<html lang="en" ng-app="bmd">
 <head>
 	<title>Welcome to FreeBMD!</title>
 	<link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.1.1/css/bootstrap.css">
@@ -8,22 +8,60 @@
 	<script type="text/javascript" src="js/jquery-1.11.0.min.js"></script>
 	<script type="text/javascript" src="js/math.min.js"></script> <!-- Import Math.js library - mathjs.org -->
 	<script type="text/javascript" src="js/lib.js"></script> <!-- Main library for FreeBMD -->
-	<script type="text/javascript" src="components/jq-console/jqconsole.min.js"></script>
+	<script type="text/javascript" src="components/jq-console/jqconsole.min.js"></script><!-- JQ Console for the console window -->
+	<script src="components/codemirror/codemirror.js"></script>
+	<script src="components/codemirror/octave/octave.js"></script>
+	<link rel="stylesheet" href="components/codemirror/codemirror.css">
+	<link rel="stylesheet" href="components/codemirror/mdn-like.css"><!-- CodeMirror for Editor -->
 </head>
 <body>
+	<nav class="navbar navbar-default" role="navigation">
+	  <div class="container-fluid">
+	    <!-- Brand and toggle get grouped for better mobile display -->
+	    <div class="navbar-header">
+	      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+	        <span class="sr-only">Toggle navigation</span>
+	        <span class="icon-bar"></span>
+	        <span class="icon-bar"></span>
+	        <span class="icon-bar"></span>
+	      </button>
+	      <a class="navbar-brand" href="#">FreeBMD</a>
+	    </div>
+
+	    <!-- Collect the nav links, forms, and other content for toggling -->
+	    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+	      <ul class="nav navbar-nav">
+	      	<li><a href="#">New</a></li>
+	        <li><a href="#">Save</a></li>
+	        <li><a href="#">Fork</a></li>
+	      </ul>
+	    </div><!-- /.navbar-collapse -->
+	  </div><!-- /.container-fluid -->
+	</nav>
 	
-	<div class="container">
-		<div class="row">
-			<h1>Welcome to FreeBMD</h1>
-		</div>	
-		
-		<div class="row">
+	<div class="row">
+		<div class="col-md-2">
+			<h3>Welcome to FreeBMD</h3>
+			<p>Created by Grant, RJ and Brendan of Team Berkeley at Big Hack 2014.</p>
+			
+		</div>
+		<div class="col-md-10">
+			<div id="editor"></div>
 			<div id="console"></div>
 		</div>
 	</div>
+		
+	</div>
 
 <script type="text/javascript">
-    // $('#console').jqconsole('welcomeString', 'promptLabel', 'continueLabel');
+    //$('#console').jqconsole('welcomeString', 'promptLabel', 'continueLabel');
+
+    $(function () {
+    	window.onbeforeunload = confirmExit;
+	    function confirmExit() {
+	        return "You have about to stop doing SCIENCE. Are you sure you want to leave?";
+	    }
+    });
 
     $(function () {
         var jqconsole = $('#console').jqconsole('Hi\n', '>>>');
@@ -37,6 +75,15 @@
           });
         };
         startPrompt();
+    	var myCodeMirror = CodeMirror(
+    		document.getElementById("editor"),
+    		{
+    			lineNumbers: true,
+    			matchBrackets: true,
+	    		value: "function y = f(x) \n y = x^2; \n end",
+	    		mode: "octave",
+	    		theme: "mdn-like"
+    		});
       });
 
 	$("#input").submit(function(e){
