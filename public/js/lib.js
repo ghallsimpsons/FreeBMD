@@ -234,7 +234,7 @@ function exec_statement( line ){
 				data['y'] = data['y']._data;
 				console.log("I did something");
 				}
-			//console.log(data, type);
+			console.log(data);
 			d3_plot(data,type);
 		}
 		else if(split_line[0]=="plot"){
