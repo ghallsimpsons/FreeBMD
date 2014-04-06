@@ -36,7 +36,7 @@ app.get('/:secret', function(request, response) {
 		client.query('SELECT environment FROM sessions WHERE secret = $1', [secret], function(err, result) {
 			done();
 			if(err) return response.send(err);
-			if(result.rows.length == 0) return res.redirect("/");
+			if(result.rows.length == 0) return response.redirect("/");
 			return response.send(result.rows[0]);
 		});
 	});
