@@ -284,6 +284,6 @@ function run_file(tab){//tab is an int
 	mycode=env.tabs[tab].code;
 	mycode=mycode.split('\n');
 	for (var line in mycode){
-		exec_statement(line);
+		exec_statement(mycode[line]);
 	}
 }
