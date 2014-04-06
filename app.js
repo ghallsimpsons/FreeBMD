@@ -1,21 +1,4 @@
-
-
-
-// app.get('/', function(request, response) {
-// 	response.send('hell is heroku');
-// });
-
-// // app.get('/:secret', function(request, response) {
-// // 	var secret = request.params.secret;
-// // 	pg.connect(connString, function(err, client, done) {
-// // 		if(err) response.send("Could not connect to DB: " + err);
-// // 		client.query('SELECT environment FROM sessions WHERE secret = $1', [secret], function(err, result) {
-// // 			done();
-// // 			if(err) return response.send(err);
-// // 			response.render('index', { env: result.rows });
-// // 		});
-
-// web.js
+// app.js
 var pg = require('pg');
 var express = require("express");
 var app = express();
@@ -40,7 +23,25 @@ app.get('/:secret', function(request, response) {
 			return response.send(result.rows[0]);
 		});
 	});
-	//response.send(secret);
+});
+
+app.get('/save', function(request, response) {
+	if(request.method == 'POST') {
+
+		console.log("[200]" + req.method + "to" + req.url);
+
+		request.on('data', function(chunk) {
+			console.log("Recieved body data:");
+			console.log(chunk.toString());
+		});
+
+		response.writeHead(200, "OK", {'Content-Type':'text/html'});
+		response.end();
+	} else {
+		console.log("[405]" + req.method + "to" + req.url);
+		response.writeHead(405, "Method not supported", {'Content-Type': 'text/html'});
+	    response.end('<html><head><title>405 - Method not supported</title></head><body><h1>Method not supported.</h1></body></html>');
+  	}
 });
 
 var port = Number(process.env.PORT || 5000);
