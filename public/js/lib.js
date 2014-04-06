@@ -235,12 +235,13 @@ function exec_statement( line ){
 			}
 			for(;i<split_line.length; i++){
 				if (isBareword(split_line[i])){
-					data['x']=math[split_line[i]];
+					data['x']=math[split_line[i]]._data;
+					i++;
 					break;}
 			}
 			for(;i<split_line.length; i++){
 				if(isBareword(split_line[i])){
-				data['y']=math[split_line[i]];
+				data['y']=math[split_line[i]]._data;
 					break;}
 			}
 			for(;i<split_line.length; i++){
@@ -255,10 +256,10 @@ function exec_statement( line ){
 			args = next_semantic_block(split_line, has_semantic_block(split_line, '(', 0));
 			datas=[]; styles=[];
 			data_num=0;
-			for( var i=args[0]; i<var.args-1; i++){
+			for( var i=args[0]; i<args[1]-1; i++){
 				if (datas[0]){
 					if (datas['x']){
-						if(datas['y']}}}
+						if(datas['y']){}}}}
 			d3_plot(data,style);
 		}
 
@@ -268,16 +269,14 @@ function exec_statement( line ){
 			varname=split_line.slice(0,split_line.indexOf('=')).join('');
 			tmpvar={};
 			expr=split_line.slice(split_line.indexOf('=')+1);
-			if(has_semantic_block(split_line,'[',0)){
-				expr=structure_array(expr);
-			}
-			tmpvar['val'] = eval_expr( expr.join('') );
-			tmpvar['type']='scalar';
-			if(tmpvar.val.hasOwnProperty("_data")
-				env.vars[varname]=tmpvar._data;
-			else env.vars[varname]=tmpvar;
-			math[varname]=tmpvar.val;
-			return env.vars[varname]['val'];
+				if(has_semantic_block(split_line,'[',0)){
+expr=structure_array(expr);
+}
+tmpvar['val'] = eval_expr( expr.join('') );
+tmpvar['type']='scalar';
+env.vars[varname]=tmpvar;
+math[varname]=tmpvar.val;
+return env.vars[varname]['val'];
 			}
 			//else if( /*obj_prop*/ ){
 				
