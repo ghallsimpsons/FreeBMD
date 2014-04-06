@@ -13,7 +13,7 @@ app.use(express.bodyParser());
 app.use(express.static(__dirname + '/public'));
 
 app.get('/', function(request, response) {
-	return response.render('index');
+	return response.render('index', {name: 1);
 });
 
 app.post('/save', function(request, response) {
