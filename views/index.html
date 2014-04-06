@@ -4,15 +4,8 @@
 	<title>Welcome to FreeBMD!</title>
 	<link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.1.1/css/bootstrap.css">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<link rel="stylesheet" href="css/style.css">
-	<script type="text/javascript" src="js/jquery-1.11.0.min.js"></script>
-	<script type="text/javascript" src="js/math.js"></script> <!-- Import Math.js library - mathjs.org -->
-	<script type="text/javascript" src="js/lib.js"></script> <!-- Main library for FreeBMD -->
-	<script type="text/javascript" src="js/plot.js"></script> <!-- Plotting library for FreeBMD -->
-	
-	<script type="text/javascript" src="components/jq-console/jqconsole.min.js"></script><!-- JQ Console for the console window -->
-	<script src="components/codemirror/codemirror.js"></script>
-	<script src="components/codemirror/octave/octave.js"></script>
+	<link rel="stylesheet" href="css/style.css"> <!-- Stylesheet -->
+	<link rel="stylesheet" href="css/nv.d3.css"> <!-- D3 CSS -->
 	<link rel="stylesheet" href="components/codemirror/codemirror.css">
 	<link rel="stylesheet" href="components/codemirror/mdn-like.css"><!-- CodeMirror for Editor -->
 </head>
@@ -61,6 +54,32 @@
 		</div>
 	</div>
 
+<!-- JQuery -->
+<script type="text/javascript" src="js/jquery-1.11.0.min.js"></script>
+<script type="text/javascript" src="js/math.js"></script> <!-- Import Math.js library - mathjs.org -->
+<script type="text/javascript" src="js/lib.js"></script> <!-- Main library for FreeBMD -->
+<script type="text/javascript" src="js/plot.js"></script> <!-- Plotting library for FreeBMD -->
+<script type="text/javascript" src="components/jq-console/jqconsole.min.js"></script><!-- JQ Console for the console window -->
+<script src="components/codemirror/codemirror.js"></script>
+<script src="components/codemirror/octave/octave.js"></script>
+	
+<!-- D3 JS includes -->
+<script src="js/nvd3/lib/d3.v3.js"></script>
+<script src="js/nvd3/nv.d3.js"></script>
+<script src="js/nvd3/src/tooltip.js"></script>
+<script src="js/nvd3/src/utils.js"></script>
+<script src="js/nvd3/src/models/legend.js"></script>
+<script src="js/nvd3/src/models/axis.js"></script>
+<script src="js/nvd3/src/models/line.js"></script>
+<script src="js/nvd3/src/models/lineChart.js"></script>
+<script src="js/nvd3/src/models/scatter.js"></script>
+<script src="js/nvd3/src/models/scatterChart.js"></script>
+<script src="js/nvd3/src/models/discreteBar.js"></script>
+<script src="js/nvd3/src/models/discreteBarChart.js"></script>
+<script src="js/nvd3/src/models/pie.js"></script>
+<script src="js/nvd3/src/models/pieChart.js"></script>
+
+<!-- Window Scripts -->
 <script type="text/javascript">
     //$('#console').jqconsole('welcomeString', 'promptLabel', 'continueLabel');
 
