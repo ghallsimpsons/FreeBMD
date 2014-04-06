@@ -204,7 +204,7 @@ function exec_statement( line ){
 		if(split_line[0]=="for"){
 			
 		}
-		else if(split_line[0]=="dplot"){
+		else if(split_line[0]=="plot"){
 			var i=1;
 			var data={};
 			var type='line';
@@ -234,7 +234,7 @@ function exec_statement( line ){
 				data['y'] = data['y']._data;
 				console.log("I did something");
 				}
-			console.log(data, type);
+			//console.log(data, type);
 			d3_plot(data,type);
 		}
 		else if(split_line[0]=="plot"){

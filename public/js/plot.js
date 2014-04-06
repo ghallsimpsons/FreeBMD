@@ -3,7 +3,7 @@ function d3_plot (data, type) {
 	for(var i in data.x){
 		p.push({'x':data.x[i], 'y':data.y[i]});
 	}
-	console.log('data is: '+p);
+	//console.log('data is: '+p);
 
 	/*These lines are all chart setup.  Pick and choose which chart features you want to utilize. */
 	  var chart = nv.models.lineChart()
