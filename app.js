@@ -14,7 +14,7 @@ app.use(express.static(__dirname + '/public'));
 app.use(express.bodyParser());
 
 app.get('/', function(request, response) {
-	return response.render('index', {num: ' '});
+	return response.render('index', {});
 });
 
 app.post('/save', function(request, response) {
@@ -46,9 +46,9 @@ app.get('/:secret', function(request, response) {
 			done();
 			if(err) return response.send(err);
 			if(result.rows.length == 0) return response.redirect("/");
-			var environment = result.rows[0];
-			console.log(JSON.parse(environment.environment));
-			return response.render('index',{env: JSON.parse(environment.environment)});
+			var _env = JSON.parse(result.rows[0].environment);
+			console.log(_env);
+			return response.render('index',{env: _env);
 		});
 	});
 });
