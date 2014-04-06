@@ -18,8 +18,8 @@ var env = {
 		/*{% if vars %}
 		{{ vars }}
 		{% else %}*/
-		e: 2.718281828459,
-		pi: 3.14159265358979,
+		e: math.e,
+		pi: math.pi,
 		i: math.sqrt(-1),
 		//{% endif %}
 		},
@@ -73,6 +73,9 @@ function tokenize( line, tokens ){
 }
 
 function exec_statement( line ){
+	if( ) {
 
+	}
+	math.eval(line);
 }
 
