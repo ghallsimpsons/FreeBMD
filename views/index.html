@@ -56,9 +56,7 @@
 <script type="text/javascript">
     //$('#console').jqconsole('welcomeString', 'promptLabel', 'continueLabel');
 
-    var node_output = {{env}};
-
-    if(node_output != null) window.env = node_output;
+    {{env_set}}
 
     $(function () {
     	window.onbeforeunload = confirmExit;

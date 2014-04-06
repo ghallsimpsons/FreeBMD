@@ -14,7 +14,7 @@ app.use(express.static(__dirname + '/public'));
 app.use(express.bodyParser());
 
 app.get('/', function(request, response) {
-	return response.render('index', {env: null});
+	return response.render('index', {env_SET: ' ');
 });
 
 app.post('/save', function(request, response) {
@@ -36,6 +36,7 @@ app.post('/save', function(request, response) {
 
 });
 
+
 app.get('/:secret', function(request, response) {
 	var secret = request.params.secret;
 	pg.connect(connString, function(err, client, done) {
@@ -47,7 +48,7 @@ app.get('/:secret', function(request, response) {
 			if(result.rows.length == 0) return response.redirect("/");
 			var environment = result.rows[0];
 			console.log(JSON.parse(environment.environment));
-			return response.render('index',{env: JSON.parse(environment.environment)});
+			return response.render('index',{env_SET: 'window.env =' + JSON.parse(environment.environment)});
 		});
 	});
 });
