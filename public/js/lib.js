@@ -33,6 +33,7 @@ var env = {
 
 function load_locals(){
 	for (var localvar in env.vars){
+		//if(env.vars.[localvar])
 		math[localvar]=env.vars[localvar].val;
 	}
 }
@@ -241,8 +242,6 @@ function exec_statement( line ){
 			}
 			tmpvar['val'] = eval_expr( expr.join('') );
 			tmpvar['type']='scalar';
-			if(tmpvar.val.hasOwnProperty("_data"))
-				tmpvar.val=tmpvar.val._data;
 			env.vars[varname]=tmpvar;
 			math[varname]=tmpvar.val;
 			return env.vars[varname]['val'];
