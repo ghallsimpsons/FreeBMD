@@ -32,7 +32,7 @@
 	    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 	      <ul class="nav navbar-nav">
 	      	<li><a href="#">New</a></li>
-	        <li><a href="#">Save</a></li>
+	        <li><a id="save" href="#">Save</a></li>
 	        <li><a href="#">Fork</a></li>
 	      </ul>
 	    </div><!-- /.navbar-collapse -->
@@ -100,6 +100,24 @@
 		var input = bmd.parse($('tester').val());		
 
 	});
+
+	$('#save').click(function() {
+		data = {
+			'secret':'1234',
+			'token','asdfqwer',
+			'env',env
+		};
+		var success = function(data, textStatus, jqXHR) {alert('Saved successfully.')};
+		var url = 'http://freebmd.herokuapp.com/save';
+		$.ajax({
+			type:"POST",
+			url: url,
+			data: data,
+			success: success,
+			dataType: 'html'
+		});
+	});
+
 </script>
 
 </body>
