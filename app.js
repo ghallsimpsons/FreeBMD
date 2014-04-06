@@ -1,16 +1,17 @@
 // app.js
+var connString = 'postgres://zntxnoglkwslwi:yOyhl4tIsGg1FzI4u0wTchC0HU@ec2-54-204-38-16.compute-1.amazonaws.com:5432/desc87qe0bn276';
+
 var pg = require('pg');
 var express = require("express");
 var cons = require('consolidate');
 var app = express();
 
 app.engine('html', cons.hogan);
-
-var connString = 'postgres://zntxnoglkwslwi:yOyhl4tIsGg1FzI4u0wTchC0HU@ec2-54-204-38-16.compute-1.amazonaws.com:5432/desc87qe0bn276';
+app.set('view engine', 'html');
+app.set('views', __dirname + '/views');
+app.use(express.static(__dirname + '/public'));
 
 app.use(express.bodyParser());
-
-app.use(express.static(__dirname + '/public'));
 
 app.get('/', function(request, response) {
 	return response.render('index', {name: 1});
