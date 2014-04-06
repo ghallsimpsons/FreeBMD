@@ -17,6 +17,14 @@ app.post('/save', function(request, response) {
 
 	console.log(request.body);
 
+	// req.on('end', function() {
+    
+      // request ended -> do something with the data
+    response.writeHead(200, "OK", {'Content-Type': 'text/html'});
+      
+    response.end();
+    // });
+
 });
 
 app.get('/:secret', function(request, response) {
