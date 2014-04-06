@@ -5,20 +5,23 @@ var express = require("express");
 var app = express();
 app.use(express.logger());
 
-app.use(express.static(__dirname));
 
-app.get('/:secret', function(request, response) {
-	var secret = request.params.secret;
-	pg.connect(connString, function(err, client, done) {
-		if(err) response.send("Could not connect to DB: " + err);
-		client.query('SELECT environment FROM sessions WHERE secret = $1', [secret], function(err, result) {
-			done();
-			if(err) return response.send(err);
-			response.render('index', { env: result.rows });
-		});
-
-	});
+app.get('/', function(request, response) {
+	response.send('hell is heroku');
 });
+
+// app.get('/:secret', function(request, response) {
+// 	var secret = request.params.secret;
+// 	pg.connect(connString, function(err, client, done) {
+// 		if(err) response.send("Could not connect to DB: " + err);
+// 		client.query('SELECT environment FROM sessions WHERE secret = $1', [secret], function(err, result) {
+// 			done();
+// 			if(err) return response.send(err);
+// 			response.render('index', { env: result.rows });
+// 		});
+
+// 	});
+// });
 
 var port = 8000;
 app.listen(port, function() {
