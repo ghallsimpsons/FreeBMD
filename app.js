@@ -29,7 +29,9 @@ app.use(
 );
 
 app.get('/:secret', function(request, response) {
-	pg.connect(connString, function(err, client, done) {});
+	pg.connect(connString, function(err, client, done) {
+		if(err) response.send("Could not connect to DB: " + err);
+	});
 	var secret = request.params.secret;
 	response.send(secret);
 });
