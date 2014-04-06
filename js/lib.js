@@ -20,7 +20,7 @@ var env = {
 		{% else %}*/
 		e: math.e,
 		pi: math.pi,
-		i: math.sqrt(-1),
+		//i: math.sqrt(-1),
 		inf: Infinity,
 		//{% endif %}
 		},
