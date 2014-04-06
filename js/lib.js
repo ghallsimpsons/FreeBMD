@@ -31,6 +31,12 @@ var env = {
 		},
 	};
 
+function load_locals(){
+	for (var localvar in env.vars){
+		math[localvar]=env.vars[localvar].val;
+	}
+}
+	
 function isBareword( word ){
 	if(word.match(/^[a-zA-Z]\w*$/)) return true; else return false;
 }
@@ -168,6 +174,7 @@ function exec_statement( line ){
 			tmpvar['val'] = eval_expr( split_line.slice(split_line.indexOf('=')+1).join('') );
 			tmpvar['type']='scalar';
 			env.vars[varname]=tmpvar;
+			math[varname]=tmpvar.val;
 			return env.vars[varname]['val'];
 			}
 			//else if( /*obj_prop*/ ){
@@ -184,10 +191,6 @@ function exec_statement( line ){
 	return err;
 	}
 	//math.eval(line);
-}
-
-function storeLocal(varname, val){
-	math.eval(varname+"="+val);
 }
 
 function eval_expr( expr ){
