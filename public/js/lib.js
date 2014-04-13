@@ -53,7 +53,7 @@ var env = {
 function attachFunc(split_line){
 	if (split_line[1]=="[") { //Function with defined outputs
 		endArgs=next_semantic_block(split_line, "[")[1];
-		console.log("1");
+		console.log(split_line);
 		var func=split_line[endArgs];
 		env.vars[func]={'val':[]};
 		for (var line = env.runtime.linenum+1; line<env.runtime.code.length; line++){
