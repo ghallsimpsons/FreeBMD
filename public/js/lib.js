@@ -3,7 +3,7 @@ var math=mathjs();
 var parse_helper={};
 
 var env = {
-	
+	'currentTab': 0,
 	'tabs': [
 				{
 				'name': 'tab1',
@@ -30,17 +30,13 @@ var env = {
 			},
 		'userfunc': {
 			'type': 'function',
-			'val': 'x=[1,2,3,4]\ny=[4,3,2,1]\nplot(x,y,\'.\')',
-			'localvars': {
-				'x': {
-					'type': 'scalar',
-					'val': '[1,2,3,4]',
-					},
-				},
+			'val': '[x=[1,2,3,4], y=[4,3,2,1], plot(x,y,\'.\')]',
+			'varin': ['arg1', 'arg2'],
+			'varout': ['x', 'y'],
 			},
 		},
 	'runtime': {
-		'code': {},
+		'code': [],
 		'linenum': 0,
 		},
 	};
@@ -54,7 +50,63 @@ var env = {
 			},*/
 			];
 		
+function attachFunc(var split_line){
+	if (split_line[1]=="[") { //Function with defined outputs
+		endArgs=next_semantic_block(split_line, "[")[1];
+		var func=split_line[endArgs];
+		for (var line = env.runtime.linenum+1; line<env.runtime.code.length; line++){
+			token_line=tokenize(env.runtime.code[line],all_tokens);
+			if (token_line[0]=="end"){
+				env.runtime.linenum=line+1;
+				return;
+			}
+			else{
+				env.vars[func].val.push(env.runtime.code[line]);
+			}
+		var outVar=[];
+		for (var i = 2; i<endArgs; i++){
+			if(isBareword(split_line[i])){
+				outVar.push(split_line[i]);
+			}
+			else if(split_line[i]==','){
+				continue;
+			}
+			else return "That ain't valid! Arg: " + split_line[i];
+		}
+		endInArgs=next_semantic_block(split_line, endArgs)[1];
+		var func=split_line[endArgs];
+		var inVar=[];
+		for (var i = endArgs; i<endInArgs; i++){
+			if(isBareword(split_line[i])){
+				inVar.push(split_line[i]);
+			}
+			else if(split_line[i]==','){
+				continue;
+			}
+			else return "That ain't valid! Arg: " + split_line[i];
+		math[func]=evalUserFunc(func, args);
+		env.vars[func].varin=inVar;
+		env.vars[func].varout=outVar;
+	}
+}
 
+function evalUserFunc(var func, var args){
+		enterScope();
+			args = Array.prototype.slice.call(arguments, 1);
+			for (var vin in env.vars[func].varin){
+				setvar(varin[vin], args[vin]);
+			}
+			for (var line in env.vars[func].val) {
+				exec_statement(env.vars[func].val[line]);
+			}
+			var myRetArgs=env.vars[func].varout;
+			for (var i in myRetArgs){
+				myRetArgs[i]=getvar(myRetArgs[i]); //Populate return vars from current stack frame
+			}
+		exitScope();
+		return myRetArgs;
+}
+		
 function exitScope(){
 	popvars=stack.pop();
 	for (var v in popvars){
@@ -248,6 +300,11 @@ function structure_array(split_index){
 	return split_index;
 }
 
+function merge_to_array(split_array){
+	//Merges comma separated syntactic list into a js array
+	return split_array.join('').split(',');
+}
+
 function exec_statement( line ){
 	try{
 		parsed_line=preparse(line);
@@ -262,30 +319,8 @@ function exec_statement( line ){
 		
 		//User defined functions
 		else if(split_line[0]=="function"){
-			if (split_line[1]=="[") { //Function with defined outputs
-				endArgs=next_semantic_block(split_line, "[")[1];
-				var myVarList;
-				for (var i = 2; i<endArgs; i++){
-					if(isBareword(split_line[i])){
-						myVarList.push(split_line[i]);
-					}
-					else if(split_line[i]==','){
-						continue;
-					}
-					else return "That ain't valid! Arg: " + split_line[i];
-				}
-				enterScope();
-				while (tokenize(env.runtime.code[++env.runtime.linenum], all_tokens)[0] != 'end') {
-					exec_statement(env.runtime.code[env.runtime.linenum]);
-				}
+			attachFunc(split_line);
 				
-				var myRetArgs={};
-				for (var i in myVarList){
-					myRetArgs[myVarList[i]]=stack[stack.length-1][myVarList[i]]; //Populate return vars from current stack frame
-				}
-				exitScope();
-				return myRetArgs;
-			}
 		}
 		
 		//Temporary plotting function for demo
@@ -374,8 +409,12 @@ function eval_expr( expr ){
 	catch(err){ return expr };
 }
 
+function set_tab(tab){
+	env.currentTab=tab;
+}
+
 function run_file(tab){//tab is an int
-	mycode=env.tabs[tab].code;
+	mycode=env.tabs[env.currentTab].code;
 	env.runtime.code=mycode.split('\n');
 	env.runtime.linenum=0;
 	for (; env.runtime.linenum<env.runtime.code.length; env.runtime.linenum++){
