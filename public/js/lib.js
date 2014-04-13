@@ -53,14 +53,18 @@ var env = {
 function attachFunc(split_line){
 	if (split_line[1]=="[") { //Function with defined outputs
 		endArgs=next_semantic_block(split_line, "[")[1];
+		console.log("1");
 		var func=split_line[endArgs];
 		for (var line = env.runtime.linenum+1; line<env.runtime.code.length; line++){
+		console.log("2");
 			token_line=tokenize(env.runtime.code[line],all_tokens);
 			if (token_line[0]=="end"){
+			console.log("3");
 				env.runtime.linenum=line+1;
-				return;
+				break;
 			}
 			else{
+			console.log("4");
 				env.vars[func].val.push(env.runtime.code[line]);
 			}
 		}
@@ -321,6 +325,7 @@ function exec_statement( line ){
 		
 		//User defined functions
 		else if(split_line[0]=="function"){
+			console.log("Found a function");
 			attachFunc(split_line);
 				
 		}
