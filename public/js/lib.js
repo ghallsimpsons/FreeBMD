@@ -55,6 +55,7 @@ function attachFunc(split_line){
 		endArgs=next_semantic_block(split_line, "[")[1];
 		console.log("1");
 		var func=split_line[endArgs];
+		env.vars[func]={};
 		for (var line = env.runtime.linenum+1; line<env.runtime.code.length; line++){
 		console.log(token_line[0]);
 			token_line=tokenize(env.runtime.code[line],all_tokens);
@@ -79,7 +80,6 @@ function attachFunc(split_line){
 			else return "That ain't valid! Arg: " + split_line[i];
 		}
 		endInArgs=next_semantic_block(split_line, endArgs)[1];
-		var func=split_line[endArgs];
 		var inVar=[];
 		for (var i = endArgs; i<endInArgs; i++){
 			if(isBareword(split_line[i])){
