@@ -56,7 +56,7 @@ function attachFunc(split_line){
 		console.log("1");
 		var func=split_line[endArgs];
 		for (var line = env.runtime.linenum+1; line<env.runtime.code.length; line++){
-		console.log("2");
+		console.log(token_line[0]);
 			token_line=tokenize(env.runtime.code[line],all_tokens);
 			if (token_line[0]=="end"){
 			console.log("3");
