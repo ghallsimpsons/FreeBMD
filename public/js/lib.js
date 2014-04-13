@@ -77,7 +77,7 @@ function getvar(varname){
 
 function setvar(varname, val){
 	if(stack.length>0){
-		stack[stack.length][varname]=val;
+		stack[stack.length-1][varname]=val;
 	}
 	else env.vars[varname]=val;
 }
