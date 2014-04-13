@@ -73,7 +73,7 @@ function attachFunc(split_line){
 			}
 		}
 		var outVar=[];
-		for (var i = 2; i<endArgs-1; i++){
+		for (var i = 2; i<endArgs-2; i++){
 			if(isBareword(split_line[i])){
 				outVar.push(split_line[i]);
 			}
@@ -122,7 +122,9 @@ function exitScope(){
 	popvars=stack.pop();
 	for (var v in popvars){
 		if (getvar(v)!=null){
+			if(getvar(v).type!='function'){
 			math[v]=getvar(v).val;
+			}
 		}
 		else math[v]=undefined;
 	}
