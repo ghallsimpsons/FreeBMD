@@ -105,7 +105,7 @@ function evalUserFunc(func, args){
 		enterScope();
 			args = Array.prototype.slice.call(arguments, 1);
 			for (var vin in env.vars[func].varin){
-				setvar(varin[vin], args[vin]);
+				setvar(env.vars[func].varin[vin], args[vin]);
 			}
 			for (var line in env.vars[func].val) {
 				exec_statement(env.vars[func].val[line]);
