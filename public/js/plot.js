@@ -1,9 +1,11 @@
 function d3_plot (data, type) {
-	var p=[];
+	var myData= [];
+	myData[0] = {};
+	myData[0].values = [];
 	for(var i in data.x){
-		p.push({'x':data.x[i], 'y':data.y[i]});
+		myData[0].values.push({'x':data.x[i], 'y':data.y[i]});
 	}
-	console.log('data is: '+p);
+	console.log('data is: '+myData[0].values);
 
 	/*These lines are all chart setup.  Pick and choose which chart features you want to utilize. */
 	  var chart = nv.models.lineChart()
@@ -20,11 +22,11 @@ function d3_plot (data, type) {
 	      .tickFormat(d3.format(',r'));
 
 	  chart.yAxis     //Chart y-axis settings
-	      .axisLabel('Voltage (v)')
+	      .axisLabel('Food')
 	      .tickFormat(d3.format('.02f'));
 
 	  d3.select('#chart svg')    //Select the <svg> element you want to render the chart in.   
-	      .datum(p)         //Populate the <svg> element with chart data...
+	      .datum(myData)         //Populate the <svg> element with chart data...
 	      .call(chart);          //Finally, render the chart!
 
 	  //Update the chart when window resizes.

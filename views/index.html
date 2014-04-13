@@ -8,6 +8,11 @@
 	<link rel="stylesheet" href="css/nv.d3.css"> <!-- D3 CSS -->
 	<link rel="stylesheet" href="components/codemirror/codemirror.css">
 	<link rel="stylesheet" href="components/codemirror/mdn-like.css"><!-- CodeMirror for Editor -->
+	<style>
+		#chart-modal .modal-header {
+			cursor: move;
+		}
+	</style>
 </head>
 <body>
 	<nav class="navbar navbar-default" role="navigation">
@@ -37,11 +42,19 @@
 	<div class="row">
 		<div class="col-md-2 col-md-offset-1">
 			<h3>Welcome to FreeBMD</h3>
-			<p>Created by Grant, RJ and Brendan of Team Berkeley at Big Hack 2014.</p>
+			<p class="small">Created by Grant, RJ and Brendan of <a href="http://www.berkeley.edu" target="_blank">Team Berkeley</a> at Big Hack 2014.</p>
 
+			<h4>Free as in Freedom</h4>
+			<p>And open source!</p>
 
+			<h4>No Installation Required</h4>
+			<p>Some of the functionality of other scientific analysis systems, all online.</p>
 
-			<button id="plot_test" class="btn btn-default" data-toggle="modal" data-target="#chart-modal">Example Plot</button>
+			<h4>Sharing Ready</h4>
+			<p>Just send your fellow engineer, scientist, or professor your unique URL.</p>
+
+			<button id="run" class="btn btn-default">Run</button>
+			<!--<button id="plot_test" class="btn btn-default" data-toggle="modal" data-target="#chart-modal">Example Plot</button>-->
 			
 		</div>
 		<div class="col-md-8 col-md-offset-1">
@@ -49,16 +62,30 @@
 			<div id="console"></div>
 		</div>
 	</div>
-	
-	<div class="modal fade" id="chart-modal">
-		<h3>Figure 1</h3>
-		<div id="chart">
+
+	<hr/>
+
+<!-- Modal -->
+<div class="modal fade" id="chart-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title" id="myModalLabel">Figure</h4>
+      </div>
+      <div class="modal-body">
+        <div id="chart">
 		  <svg></svg>
 		</div>
-	</div>
+      </div>
+    </div>
+  </div>
+</div>
 
 <!-- JQuery -->
 <script type="text/javascript" src="js/jquery-1.11.0.min.js"></script>
+<script src="//code.jquery.com/ui/1.10.4/jquery-ui.js"></script>
+
 <!-- Bootstrap -->
 <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.1.1/js/bootstrap.min.js"></script>
 <script type="text/javascript" src="js/math.js"></script> <!-- Import Math.js library - mathjs.org -->
@@ -102,7 +129,7 @@
     });
 
     $(function () {
-        var jqconsole = $('#console').jqconsole('Hi\n', '>>>');
+        var jqconsole = $('#console').jqconsole('FreeBMD V0.1\n', '>>>');
         var startPrompt = function () {
           // Start the prompt with history enabled.
           jqconsole.Prompt(true, function (input) {
@@ -118,7 +145,7 @@
     		{
     			lineNumbers: true,
     			matchBrackets: true,
-	    		value: "function y = f(x) \n y = x^2; \n end",
+	    		value: "% Example Functionality of FreeBMD \n\n % Do simple math \n 3+3 \n\n % Assign variables for later \n g = 9.81 \n\n % Do unit conversion \n 1 cm to inch \n\n % Take determinants \n d = det([1 2; 3 4]) \n\n % Here's a plot of the food consumed \n % over the last 24 hours\n t = 1:24\n food = sin(t)\n plot(t, food)\n",
 	    		mode: "octave",
 	    		theme: "mdn-like"
     		});
@@ -130,7 +157,6 @@
 	});
 
 	$('#plot_test').click(function() {
-
 
 		var data = [{ 
 					key:'Line 1',
@@ -160,9 +186,20 @@
 				}];
 		var chart = d3_plot(data,'line');
 
+		$('chart-modal').on('shown.bs.modal', function() {
+			chart.update();
+		});
+
+		$('#chart-modal').draggable().resizable();
+
 		// xAxisTitle('Time', chart);
 		// yAxisTitle('Dudes in the Room', chart);
 
+	});
+
+	$('#run').click(function() {
+		env['tabs'][0].code = codemir.getValue();
+		run_file(0);
 	});
 
 	$('#save').click(function() {

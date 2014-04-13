@@ -286,7 +286,8 @@ function exec_statement( line ){
 		}
 		
 		//Temporary plotting function for demo
-		else if(split_line[0]=="dplot"){
+		else if(split_line[0]=="plot"){
+			$('#chart-modal').modal('toggle');
 			var i=1;
 			var data={};
 			var type='line';
@@ -309,7 +310,14 @@ function exec_statement( line ){
 					if (split_line[i]=='.') type='scatter';
 				}
 			}
-			console.log(data, type);
+			if(data['x'].hasOwnProperty('_data')){
+				data['x'] = data['x']._data;
+				}
+			if(data['y'].hasOwnProperty('_data')){
+				data['y'] = data['y']._data;
+				console.log("I did something");
+				}
+			console.log(data);
 			d3_plot(data,type);
 		}
 		else if(split_line[0]=="plot"){
@@ -320,7 +328,8 @@ function exec_statement( line ){
 				if (datas[0]){
 					if (datas['x']){
 						if(datas['y']){}}}}
-			d3_plot(data,style);
+			chart = d3_plot(data,style);
+			setTimeout(10000, chart.update());
 		}
 
 		else if (split_line.indexOf('=')>0 && split_line[split_line.indexOf('=')+1]!='=' && split_line[split_line.indexOf('=')-1]!='<' && split_line[split_line.indexOf('=')-1]!='>' && split_line[split_line.indexOf('=')-1]!='~'){
