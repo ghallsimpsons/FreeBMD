@@ -63,6 +63,7 @@ function attachFunc(var split_line){
 			else{
 				env.vars[func].val.push(env.runtime.code[line]);
 			}
+		}
 		var outVar=[];
 		for (var i = 2; i<endArgs; i++){
 			if(isBareword(split_line[i])){
