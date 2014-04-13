@@ -52,7 +52,7 @@ var env = {
 		
 function attachFunc(split_line){
 	if (split_line[1]=="[") { //Function with defined outputs
-		endArgs=next_semantic_block(split_line, "[")[1];
+		endArgs=next_semantic_block(split_line, 1)[1];
 		colsole.log(endArgs);
 		console.log(split_line);
 		console.log(split_line[endArgs+1]);
