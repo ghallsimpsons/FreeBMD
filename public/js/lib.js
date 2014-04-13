@@ -55,7 +55,7 @@ function attachFunc(split_line){
 		endArgs=next_semantic_block(split_line, "[")[1];
 		console.log("1");
 		var func=split_line[endArgs];
-		env.vars[func]={{'val':[]}};
+		env.vars[func]={'val':[]};
 		for (var line = env.runtime.linenum+1; line<env.runtime.code.length; line++){
 			token_line=tokenize(env.runtime.code[line],all_tokens);
 			console.log(token_line[0]);
