@@ -73,7 +73,7 @@ function attachFunc(split_line){
 			}
 		}
 		var outVar=[];
-		for (var i = 2; i<endArgs; i++){
+		for (var i = 2; i<endArgs-1; i++){
 			if(isBareword(split_line[i])){
 				outVar.push(split_line[i]);
 			}
