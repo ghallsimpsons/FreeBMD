@@ -61,7 +61,7 @@ function exitScope(){
 		if (getvar(v)!=null){
 			math[v]=getvar(v).val;
 		}
-		else math[v]=null;
+		else math[v]=undefined;
 	}
 }
 
