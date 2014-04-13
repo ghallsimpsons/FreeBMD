@@ -54,7 +54,7 @@ function attachFunc(split_line){
 	if (split_line[1]=="[") { //Function with defined outputs
 		endArgs=next_semantic_block(split_line, "[")[1];
 		console.log(split_line);
-		var func=split_line[endArgs];
+		var func=split_line[endArgs+1];
 		env.vars[func]={'val':[]};
 		for (var line = env.runtime.linenum+1; line<env.runtime.code.length; line++){
 			token_line=tokenize(env.runtime.code[line],all_tokens);
@@ -292,7 +292,11 @@ function tokenize( line, tokens ){
 			arr.push(tokenize_str( tmparr[str], tokens[t] ));
 		}
 	}
-	return flatten(arr);
+	arr=flatten(arr);
+	while(arr.indexOf('')>-1){
+		arr.splice(arr.indexOf(''),1);
+	}
+	return arr;
 }
 
 function structure_array(split_index){
