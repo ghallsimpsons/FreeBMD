@@ -345,7 +345,7 @@ function exec_statement( line ){
 			tmpvar['type']='scalar';
 			setvar(varname,tmpvar);
 			math[varname]=tmpvar.val;
-			return env.vars[varname]['val'];
+			return getvar(varname)['val'];
 			}
 			//else if( /*obj_prop*/ ){
 				
