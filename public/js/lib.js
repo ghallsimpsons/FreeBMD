@@ -77,7 +77,7 @@ function getvar(varname){
 
 function setvar(varname, val){
 	if(stack.length>0){
-		stack[stack.length][varname]=val;
+		stack[stack.length-1][varname]=val;
 	}
 	else env.vars[varname]=val;
 }
@@ -258,7 +258,7 @@ function exec_statement( line ){
 		}
 		
 		//User defined functions
-		else if(split_line[0]=="function"{
+		else if(split_line[0]=="function"){
 			if (split_line[1]=="[") { //Function with defined outputs
 				endArgs=next_semantic_block(split_line, "[")[1];
 				var myVarList;
@@ -345,7 +345,7 @@ function exec_statement( line ){
 			tmpvar['type']='scalar';
 			setvar(varname,tmpvar);
 			math[varname]=tmpvar.val;
-			return env.vars[varname]['val'];
+			return getvar(varname)['val'];
 			}
 			//else if( /*obj_prop*/ ){
 				
