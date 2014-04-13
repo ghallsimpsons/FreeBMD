@@ -77,7 +77,7 @@ function attachFunc(split_line){
 			else if(split_line[i]==','){
 				continue;
 			}
-			else return "That ain't valid! Arg: " + split_line[i];
+			else console.log( "That ain't valid! Arg: " + split_line[i]);
 		}
 		endInArgs=next_semantic_block(split_line, endArgs)[1];
 		var inVar=[];
@@ -88,8 +88,9 @@ function attachFunc(split_line){
 			else if(split_line[i]==','){
 				continue;
 			}
-			else return "That ain't valid! Arg: " + split_line[i];
+			else console.log( "That ain't valid! Arg: " + split_line[i]);
 		}
+		console.log("Attaching");
 		math[func]=evalUserFunc(func, args);
 		env.vars[func].varin=inVar;
 		env.vars[func].varout=outVar;
