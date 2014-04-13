@@ -92,7 +92,7 @@ function attachFunc(split_line){
 	}
 }
 
-function evalUserFunc(var func, var args){
+function evalUserFunc(func, args){
 		enterScope();
 			args = Array.prototype.slice.call(arguments, 1);
 			for (var vin in env.vars[func].varin){
