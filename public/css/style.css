@@ -1,10 +1,67 @@
+/* Nav Bar */
+
+.navbar-inverse {
+    background-color: #3D92BE;
+}
+
+.navbar {
+    border-radius: 0px;
+    border: none;
+}
+
+.navbar > .container-fluid .navbar-brand {
+    min-width: 200px;
+    color: #fff;
+}
+
+.navbar-inverse .navbar-nav > li > a, .navbar-inverse a, .navbar-inverse a:visited {
+    color: rgba(255,255,255,0.7);
+    transition: color .25s ease-in-out;
+    -moz-transition: color .25s ease-in-out;
+    -webkit-transition: color .25s ease-in-out;
+}
+
+.navbar-inverse .navbar-nav > li > a:hover, .navbar-inverse a:hover {
+    color: rgba(0,0,0,1.0);
+}
+
+/* Panel-ization */
+
+.documentation-panel {
+    width: 30%;
+    background-color: #fefefe;
+    position: absolute;
+    padding: 15px;
+    height: 100%;
+}
+
+.editor-console-panels {
+    position: absolute;
+    width: 70%;
+    right: 0px;
+    min-height: 100%;
+}
+
+.editor-panel {
+    position: absolute;
+    width: 50%;
+    left: 0px;
+    height: 100%;
+}
+
+.console-panel {
+    position: absolute;
+    width: 50%;
+    right: 0px;
+    height: 100%;
+}
+
+.con
+
 /* The console container element */
 
     #editor {
-      position: relative;
-      width: 49%;
-      height: 500px;
-      float:left;
+        height: 100%;
     }
 
     #resize-center {
@@ -17,12 +74,7 @@
     }
 
     #console {
-        margin-left:10px;
-      position: relative;
-      width: 49%;
-      height: 500px;
-      background-color:black;
-      float:left;
+        height: 100%;
     }
     /* The inner console element. */
     .jqconsole {

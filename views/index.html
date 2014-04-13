@@ -2,7 +2,9 @@
 <html lang="en" ng-app="bmd">
 <head>
 	<title>Welcome to FreeBMD!</title>
-	<link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.1.1/css/bootstrap.css">
+	<link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.1.1/css/bootstrap.css"> <!-- Bootstrap -->
+	<link href="http://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet"> <!-- Font Awesome -->
+
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="css/style.css"> <!-- Stylesheet -->
 	<link rel="stylesheet" href="css/nv.d3.css"> <!-- D3 CSS -->
@@ -30,17 +32,21 @@
 
 	    <!-- Collect the nav links, forms, and other content for toggling -->
 	    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-	      <ul class="nav navbar-nav">
-	      	<li><a href="#">New</a></li>
-	        <li><a id="save" href="#">Save</a></li>
-	        <li><a href="#">Fork</a></li>
+	     <ul class="nav navbar-nav">
+	      	<li><a id="run" href="#"><i class="fa fa-rocket"></i> Run</a></li>
+	        <li><a id="save" href="#"><i class="fa fa-pencil"></i> Save</a></li>
+	        <li><a id="fork" href="#"><i class="fa fa-code-fork"></i> Fork</a></li>
+	        <li><a id="fork" href="#"><i class="fa fa-users"></i> Collaborate</a></li>
+	      </ul>
+	      <ul class="nav navbar-nav pull-right">
+	        <li><a href="#" id="login"><i class="fa fa-key"></i> Login</a></li>
 	      </ul>
 	    </div><!-- /.navbar-collapse -->
 	  </div><!-- /.container-fluid -->
 	</nav>
 	
-	<div class="row">
-		<div class="col-md-2 col-md-offset-1">
+	<div class="documentation-panel">
+		<div class="documentation">
 			<h3>Welcome to FreeBMD</h3>
 			<p class="small">Created by Grant, RJ and Brendan of <a href="http://www.berkeley.edu" target="_blank">Team Berkeley</a> at Big Hack 2014.</p>
 
@@ -52,18 +58,19 @@
 
 			<h4>Sharing Ready</h4>
 			<p>Just send your fellow engineer, scientist, or professor your unique URL.</p>
-
-			<button id="run" class="btn btn-default">Run</button>
 			<!--<button id="plot_test" class="btn btn-default" data-toggle="modal" data-target="#chart-modal">Example Plot</button>-->
 			
 		</div>
-		<div class="col-md-8 col-md-offset-1">
+	</div>
+	<div class="editor-console-panels">
+		<div class="editor-panel">
 			<div id="editor"></div>
+			<div id="hz-part-2" class="horiz-partition"></div>
+		</div>
+		<div class="console-panel">
 			<div id="console"></div>
 		</div>
 	</div>
-
-	<hr/>
 
 <!-- Modal -->
 <div class="modal fade" id="chart-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
