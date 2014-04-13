@@ -50,7 +50,7 @@ var env = {
 			},*/
 			];
 		
-function attachFunc(var split_line){
+function attachFunc(split_line){
 	if (split_line[1]=="[") { //Function with defined outputs
 		endArgs=next_semantic_block(split_line, "[")[1];
 		var func=split_line[endArgs];
