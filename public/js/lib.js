@@ -28,8 +28,59 @@ var env = {
 			'type': 'scalar',
 			'val': math.Infinity,
 			},
+		'userfunc': {
+			'type': 'function',
+			'val': 'x=[1,2,3,4]\ny=[4,3,2,1]\nplot(x,y,\'.\')',
+			'localvars': {
+				'x': {
+					'type': 'scalar',
+					'val': '[1,2,3,4]',
+					},
+				},
+			},
+		},
+	'runtime': {
+		'code': {},
+		'linenum': 0,
 		},
 	};
+	
+	stack = [
+			/*{
+				'x': {
+				'type': 'scalar',
+				'val': '[1,2,3,4]',
+				},
+			},*/
+			];
+		
+
+function exitScope(){
+	popvars=stack.pop();
+	for (var v in popvars){
+		math[popvars[v]]=getvar(popvars[v]);
+	}
+}
+
+function enterScope(){
+	stack.push({});
+}
+
+function getvar(varname){
+	for(var i=stack.length-1; i>=0; i--){
+		if (stack[i][varname]!=null){
+			return stack[i][varname];
+		}
+	}
+	return env.vars[varname];
+}
+
+function setvar(varname, val){
+	if(stack.length>0){
+		stack[stack.length][varname]=val;
+	}
+	else env.vars[varname]=val;
+}
 
 function load_locals(){
 	for (var localvar in env.vars){
@@ -92,9 +143,9 @@ function next_semantic_block( obj, index ){
 }
 
 function has_semantic_block( obj, type, index){//type can be (, [, {
-	var n
+	var n;
 	for(var i=index; i<obj.length;){
-		n=next_semantic_block(obj,i)
+		n=next_semantic_block(obj,i);
 		if(n){
 			if(obj[n[0]] == type){
 				return n[0];
@@ -182,6 +233,7 @@ function tokenize( line, tokens ){
 }
 
 function structure_array(split_index){
+	//This creates a semantic block array
 	range=next_semantic_block(split_index, has_semantic_block(split_index,'[',0));
 	var top=range[1]-2;
 	for (var i = range[0]+1; i<top; i++){
@@ -204,6 +256,36 @@ function exec_statement( line ){
 		if(split_line[0]=="for"){
 			
 		}
+		
+		//User defined functions
+		else if(split_line[0]=="function"{
+			if (split_line[1]=="[") { //Function with defined outputs
+				endArgs=next_semantic_block(split_line, "[")[1];
+				var myVarList;
+				for (var i = 2; i<endArgs; i++){
+					if(isBareword(split_line[i])){
+						myVarList.push(split_line[i]);
+					}
+					else if(split_line[i]==','){
+						continue;
+					}
+					else return "That ain't valid! Arg: " + split_line[i];
+				}
+				enterScope();
+				while (tokenize(env.runtime.code[++env.runtime.linenum], all_tokens)[0] != 'end') {
+					exec_statement(env.runtime.code[env.runtime.linenum]);
+				}
+				
+				var myRetArgs={};
+				for (var i in myVarList){
+					myRetArgs[myVarList[i]]=stack[stack.length-1][myVarList[i]]; //Populate return vars from current stack frame
+				}
+				exitScope();
+				return myRetArgs;
+			}
+		}
+		
+		//Temporary plotting function for demo
 		else if(split_line[0]=="dplot"){
 			var i=1;
 			var data={};
@@ -252,7 +334,7 @@ function exec_statement( line ){
 			}
 			tmpvar['val'] = eval_expr( expr.join('') );
 			tmpvar['type']='scalar';
-			env.vars[varname]=tmpvar;
+			setvar(varname,tmpvar);
 			math[varname]=tmpvar.val;
 			return env.vars[varname]['val'];
 			}
@@ -282,8 +364,9 @@ function eval_expr( expr ){
 
 function run_file(tab){//tab is an int
 	mycode=env.tabs[tab].code;
-	mycode=mycode.split('\n');
-	for (var line in mycode){
-		exec_statement(mycode[line]);
+	env.runtime.code=mycode.split('\n');
+	env.runtime.linenum=0;
+	for (; env.runtime.linenum<env.runtime.code.length; env.runtime.linenum++){
+		exec_statement(env.runtime.code[env.runtime.linenum]);
 	}
 }
