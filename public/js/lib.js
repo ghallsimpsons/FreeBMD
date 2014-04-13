@@ -258,7 +258,7 @@ function exec_statement( line ){
 		}
 		
 		//User defined functions
-		else if(split_line[0]=="function"{
+		else if(split_line[0]=="function"){
 			if (split_line[1]=="[") { //Function with defined outputs
 				endArgs=next_semantic_block(split_line, "[")[1];
 				var myVarList;
