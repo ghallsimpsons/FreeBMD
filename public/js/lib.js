@@ -84,6 +84,7 @@ function attachFunc(var split_line){
 				continue;
 			}
 			else return "That ain't valid! Arg: " + split_line[i];
+		}
 		math[func]=evalUserFunc(func, args);
 		env.vars[func].varin=inVar;
 		env.vars[func].varout=outVar;
