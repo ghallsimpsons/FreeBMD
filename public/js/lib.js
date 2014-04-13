@@ -91,7 +91,7 @@ function attachFunc(split_line){
 			else console.log( "That ain't valid! Arg: " + split_line[i]);
 		}
 		console.log("Attaching");
-		math[func]=evalUserFunc(func, args);
+		math[func]=function(args){ evalUserFunc(func, args); }
 		env.vars[func].varin=inVar;
 		env.vars[func].varout=outVar;
 	}
