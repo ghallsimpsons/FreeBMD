@@ -58,7 +58,7 @@ var env = {
 function exitScope(){
 	popvars=stack.pop();
 	for (var v in popvars){
-		math[popvars[v]]=getvar(popvars[v]);
+		math[v]=getvar(v);
 	}
 }
 
