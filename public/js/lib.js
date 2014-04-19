@@ -58,7 +58,7 @@ function attachFunc(split_line){
 		console.log(split_line);
 		console.log(split_line[endArgs+1]);
 		var func=split_line[endArgs+1];
-		env.vars[func]={'val':[]};
+		env.vars[func]={'type':'function', 'val':[]};
 		for (var line = env.runtime.linenum+1; line<env.runtime.code.length; line++){
 			token_line=tokenize(env.runtime.code[line],all_tokens);
 			console.log(token_line[0]);
@@ -73,7 +73,7 @@ function attachFunc(split_line){
 			}
 		}
 		var outVar=[];
-		for (var i = 2; i<endArgs-2; i++){
+		for (var i = 2; i<endArgs-1; i++){
 			if(isBareword(split_line[i])){
 				outVar.push(split_line[i]);
 			}
@@ -82,9 +82,9 @@ function attachFunc(split_line){
 			}
 			else console.log( "That ain't valid! Arg: " + split_line[i]);
 		}
-		endInArgs=next_semantic_block(split_line, endArgs)[1];
+		inArgs=next_semantic_block(split_line, endArgs+2);
 		var inVar=[];
-		for (var i = endArgs; i<endInArgs; i++){
+		for (var i = inArgs[0]; i<inArgs[1]; i++){
 			if(isBareword(split_line[i])){
 				inVar.push(split_line[i]);
 			}
@@ -97,22 +97,27 @@ function attachFunc(split_line){
 		math[func]=function(args){ evalUserFunc(func, args); }
 		console.log(math[func]);
 		env.vars[func].varin=inVar;
+		console.log(outVar);
 		env.vars[func].varout=outVar;
 	}
 }
 
 function evalUserFunc(func, args){
 		enterScope();
+			console.log("I'm tryin' to eval "+func+" with args "+args);
 			args = Array.prototype.slice.call(arguments, 1);
 			for (var vin in env.vars[func].varin){
 				setvar(env.vars[func].varin[vin], args[vin]);
+				console.log(env.vars[func].varin[vin]+"="+getvar(env.vars[func].varin[vin]));
 			}
 			for (var line in env.vars[func].val) {
 				exec_statement(env.vars[func].val[line]);
 			}
-			var myRetArgs=env.vars[func].varout;
+			var myRetArgs=Object.create(env.vars[func].varout);
+			console.log(env.vars[func].varout);
 			for (var i in myRetArgs){
 				myRetArgs[i]=getvar(myRetArgs[i]); //Populate return vars from current stack frame
+				console.log(myRetArgs[i]);
 			}
 		exitScope();
 		return myRetArgs;
@@ -148,6 +153,7 @@ function setvar(varname, val){
 		stack[stack.length-1][varname]=val;
 	}
 	else env.vars[varname]=val;
+	math[varname]=val;
 }
 
 function load_locals(){
@@ -392,15 +398,18 @@ function exec_statement( line ){
 			//Yay! We've found an assignment!
 			if( 1==1 ){
 			varname=split_line.slice(0,split_line.indexOf('=')).join('');
+			console.log("Assigning "+varname);
 			tmpvar={};
 			expr=split_line.slice(split_line.indexOf('=')+1);
 			if(has_semantic_block(split_line,'[',0)){
 				expr=structure_array(expr);
 			}
+			console.log(expr.join(''));
 			tmpvar['val'] = eval_expr( expr.join('') );
 			tmpvar['type']='scalar';
 			setvar(varname,tmpvar);
 			math[varname]=tmpvar.val;
+			console.log(varname+"="+getvar(varname)['val']);
 			return getvar(varname)['val'];
 			}
 			//else if( /*obj_prop*/ ){
