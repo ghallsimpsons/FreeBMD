@@ -55,20 +55,15 @@ function attachFunc(split_line){
 	if (split_line[1]=="[") { //Function with defined outputs
 		endArgs=next_semantic_block(split_line, 1)[1];
 		console.log(endArgs);
-		console.log(split_line);
-		console.log(split_line[endArgs+1]);
 		var func=split_line[endArgs+1];
 		env.vars[func]={'type':'function', 'val':[]};
 		for (var line = env.runtime.linenum+1; line<env.runtime.code.length; line++){
 			token_line=tokenize(env.runtime.code[line],all_tokens);
-			console.log(token_line[0]);
 			if (token_line[0]=="end"){
-			console.log("3");
-				env.runtime.linenum=line+1;
+				env.runtime.linenum=line;
 				break;
 			}
 			else{
-			console.log("4");
 				env.vars[func].val.push(env.runtime.code[line]);
 			}
 		}
@@ -80,7 +75,6 @@ function attachFunc(split_line){
 			else if(split_line[i]==','){
 				continue;
 			}
-			else console.log( "That ain't valid! Arg: " + split_line[i]);
 		}
 		inArgs=next_semantic_block(split_line, endArgs+2);
 		var inVar=[];
@@ -91,10 +85,8 @@ function attachFunc(split_line){
 			else if(split_line[i]==','){
 				continue;
 			}
-			else console.log( "That ain't valid! Arg: " + split_line[i]);
 		}
-		console.log("Attaching:" + func);
-		math[func]=function(args){ evalUserFunc(func, args); }
+		math[func]=function(args){ return evalUserFunc(func, Array.slice(arguments)); }
 		console.log(math[func]);
 		env.vars[func].varin=inVar;
 		console.log(outVar);
@@ -104,23 +96,21 @@ function attachFunc(split_line){
 
 function evalUserFunc(func, args){
 		enterScope();
-			console.log("I'm tryin' to eval "+func+" with args "+args);
-			args = Array.prototype.slice.call(arguments, 1);
 			for (var vin in env.vars[func].varin){
 				setvar(env.vars[func].varin[vin], args[vin]);
 				console.log(env.vars[func].varin[vin]+"="+getvar(env.vars[func].varin[vin]));
 			}
 			for (var line in env.vars[func].val) {
+				console.log('a='+getvar('a'));
 				exec_statement(env.vars[func].val[line]);
 			}
 			var myRetArgs=Object.create(env.vars[func].varout);
-			console.log(env.vars[func].varout);
 			for (var i in myRetArgs){
 				myRetArgs[i]=getvar(myRetArgs[i]); //Populate return vars from current stack frame
-				console.log(myRetArgs[i]);
 			}
 		exitScope();
-		return myRetArgs;
+		console.log(myRetArgs);
+		return myRetArgs.val;
 }
 		
 function exitScope(){
