@@ -6,6 +6,7 @@ var express = require("express");
 var cons = require('consolidate');
 var app = express();
 
+console.log("Do I work?");
 app.engine('html', cons.hogan);
 app.set('view engine', 'html');
 app.set('views', __dirname + '/views');
