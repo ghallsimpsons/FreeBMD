@@ -1,7 +1,5 @@
 var math=mathjs();
-
 var varnamestack=[];//TODO: GET RID OF THIS!
-
 var parse_helper={};
 
 var env = {
@@ -30,12 +28,12 @@ var env = {
 			'type': 'scalar',
 			'val': math.Infinity,
 			},
-		'userfunc': {
+/*		'userfunc': {		Sample user-defined function
 			'type': 'function',
 			'val': '[x=[1,2,3,4], y=[4,3,2,1], plot(x,y,\'.\')]',
 			'varin': ['arg1', 'arg2'],
 			'varout': ['x', 'y'],
-			},
+			},*/
 		},
 	'runtime': {
 		'code': [],
@@ -44,7 +42,7 @@ var env = {
 	};
 	
 	stack = [
-			/*{
+			/*{ 	Structure same as defined above
 				'x': {
 				'type': 'scalar',
 				'val': '[1,2,3,4]',
@@ -53,8 +51,12 @@ var env = {
 			];
 		
 function attachFunc(split_line){
-
-
+	/* Attaches a user defined function to the
+	 * math object for execution with math.eval().
+	 * Expects: tokenized line of the format
+	 *	["function","[","varOut","]","=","funcName","[","inArg","]"]
+	 * Returns: N/A
+	 */
 	if (split_line[1]=="[") { //Function with defined outputs
 		endArgs=nextSemanticBlock(split_line, 1)[1];
 
@@ -98,24 +100,25 @@ function attachFunc(split_line){
 }
 
 function evalUserFunc(func, args){
-
-	//Takes a function and values for vars specified in declaration and returns a value tuple.
+	/* Evaluates a user defined function with the given arguments.
+	 * When attached as a lambda math.f=>function(args), it is
+	 * called with math.f(args)
+	 * Expects: Function name and the arguments to be passed.
+	 * Returns: List of values returned by f(args)
+	 */
 		enterScope();
+			// Push input vars into local scope.
 			for (var vin in env.vars[func].varin){
 				setvar(env.vars[func].varin[vin], {'type': 'scalar', 'val': args[vin]} );
-
 			}
+			// Execute function line-by-line
 			for (var line in env.vars[func].val) {
 				execStatement(env.vars[func].val[line]);
 			}
+			// Populate return vars from current stack frame 
 			var myRetVals=[];
-
-
 			for (var i in env.vars[func].varout){
-
-
-				myRetVals.push(getvar(env.vars[func].varout[i]).val); //Populate return vars from current stack frame
-
+				myRetVals.push(getvar(env.vars[func].varout[i]).val);
 			}
 		exitScope();
 
@@ -123,7 +126,12 @@ function evalUserFunc(func, args){
 }
 		
 function exitScope(){
-
+	/* Pops the top stack frame and sets the
+	 * values of the math object variables with
+	 * their new values, if any.
+	 * Expects: N/A
+	 * Returns: N/A
+	 */
 	popvars=stack.pop();
 	for (var v in popvars){
 		if (getvar(v)!=null){
@@ -136,11 +144,20 @@ function exitScope(){
 }
 
 function enterScope(){
+	/* Pushes a new frame to the stack.
+	 * Expects: N/A
+	 * Returns: N/A
+	 */
 	stack.push({});
 }
 
 function getvar(varname){
-
+	/* Returns the unmasked value of the defined variable.
+	 * Ideas: Check that variable, if exists, is properly formatted
+	 * with a nonempty type, else emit warning?
+	 * Expects: Variable name
+	 * Returns: Unmasked variable value
+	 */
 	for(var i=stack.length-1; i>=0; i--){
 		if (stack[i][varname]!=null){
 			return stack[i][varname];
@@ -150,7 +167,13 @@ function getvar(varname){
 }
 
 function setvar(varname, val){
-
+	/* Sets varialbe at the top of the stack, or
+	 * in the environment if not in a local scope.
+	 * TODO: setGlobal(varname, val) for definine 
+	 * globals while in a local scope.
+	 * Expects: Variable name, value to assign.
+	 * Returns: N/A
+	 */
 	if(stack.length>0){
 		stack[stack.length-1][varname]=val;
 	}
@@ -158,8 +181,11 @@ function setvar(varname, val){
 	math[varname]=val.val;
 }
 
-function load_locals(){
-
+function loadLocals(){
+	/* TODO: Forgot what this does...
+	 * Expects: N/A
+	 * Returns: N/A
+	 */
 	for (var localvar in env.vars){
 		try{
 		if(env.vars[localvar].val.hasOwnProperty('_data')){
@@ -171,30 +197,53 @@ function load_locals(){
 }
 	
 function isBareword( word ){
-
+	/* Checks if word is a valid variable name. TODO: Can MatLab vars start with '_'?
+	 * Expects: string
+	 * Returns: Bool, whether of not word is a bareword.
+	 */
 	if(word.match(/^[a-zA-Z]\w*$/)) return true; else return false;
 }
 
 function isScalar( word ){
-
+	/* Whether the return value (might be) scalar:
+	 * e.g. funcThatReturnsNum() or scalarMatrix[2] 
+	 * TODO: More foolproof method for checking return type.
+	 * Expects: string
+	 * Returns: Bool, whether return val could be scalar
+	 */
 	if(word.match(/^(\w|[\.\+\-\/\*\(\)])*$/)) return true; else return false;
 }
 	
 function flatten(array) {
-
-  var result = [], self = arguments.callee;
-  array.forEach(function(item) {
-    Array.prototype.push.apply(
-      result,
-      Array.isArray(item) ? self(item) : [item]
-    );
-  });
-  return result;
+	/* Flattens arrays, because I'm lazy.
+	 * Depending on how many times this is
+	 * called, this might become a bottleneck.
+	 * In that case, I'll figure out how to do
+	 * things right.
+	 * Expects: n-d array
+	 * Returns: 1-d array
+	 */
+	 var result = [], self = arguments.callee;
+	 array.forEach(function(item) {
+		 Array.prototype.push.apply(
+			 result,
+			 Array.isArray(item) ? self(item) : [item]
+		 );
+	 });
+	  return result;
 };
 
 function nextSemanticBlock( obj, index ){
-
-	//Returns the start and end index of the next semantic block [start,end]
+	/* Returns the start and end index of the next semantic block [start,end]
+	 * Semantic blocks are deliminated by the special characters list, and
+	 * are blocked with blocking characters [, { and (.
+	 * Expects: tokenified object and an index to start searching
+	 * Returns: The bounds of the first block after 'index'
+	 * Note: index should be the 'end' of a previous call, since starting
+	 * 	a search in the middle of a block will produce unexpected results.
+	 * TODO: I could make this start at begining regardles of specified index,
+	 * and only returning the first block with start>index (see above).
+	 */
 	var start_ind;
 	var blocked='';
 	var depth=0;
@@ -220,11 +269,18 @@ function nextSemanticBlock( obj, index ){
 		else if(obj[i]=='{'){ blocked='{'; if(depth++==0) start_ind=i;}
 		
 	}
+	if(blocked){
+		throw("ERROR: Unbalanced token `"+blocked+"` in line: `"+obj.join('')+'`');
+	}
 	return false;
 }
 
-function hasSemanticBlock( obj, type, index){//type can be (, [, {
-
+function hasSemanticBlock( obj, type, index){
+	/* Determines whether the object contans a properly formatted
+	 * syntactic block.
+	 * Expects: obj=>tokenized line; type=> [ or { or (; index=> int
+	 * Returns: Bool, whether properly formatted block of given type exists.
+	 */
 	var n;
 	for(var i=index; i<obj.length;){
 		n=nextSemanticBlock(obj,i);
