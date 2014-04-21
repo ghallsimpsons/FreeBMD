@@ -1,5 +1,7 @@
 var math=mathjs();
 
+var varnamestack=[];//TODO: GET RID OF THIS!
+
 var parse_helper={};
 
 var env = {
@@ -51,10 +53,11 @@ var env = {
 			];
 		
 function attachFunc(split_line){
-	console.log(split_line[1]);
+
+
 	if (split_line[1]=="[") { //Function with defined outputs
-		endArgs=next_semantic_block(split_line, 1)[1];
-		console.log(endArgs);
+		endArgs=nextSemanticBlock(split_line, 1)[1];
+
 		var func=split_line[endArgs+1];
 		env.vars[func]={'type':'function', 'val':[]};
 		for (var line = env.runtime.linenum+1; line<env.runtime.code.length; line++){
@@ -76,7 +79,7 @@ function attachFunc(split_line){
 				continue;
 			}
 		}
-		inArgs=next_semantic_block(split_line, endArgs+2);
+		inArgs=nextSemanticBlock(split_line, endArgs+2);
 		var inVar=[];
 		for (var i = inArgs[0]; i<inArgs[1]; i++){
 			if(isBareword(split_line[i])){
@@ -87,33 +90,40 @@ function attachFunc(split_line){
 			}
 		}
 		math[func]=function(args){ return evalUserFunc(func, Array.slice(arguments)); }
-		console.log(math[func]);
+
 		env.vars[func].varin=inVar;
-		console.log(outVar);
+
 		env.vars[func].varout=outVar;
 	}
 }
 
 function evalUserFunc(func, args){
+
+	//Takes a function and values for vars specified in declaration and returns a value tuple.
 		enterScope();
 			for (var vin in env.vars[func].varin){
-				setvar(env.vars[func].varin[vin], args[vin]);
-				console.log(env.vars[func].varin[vin]+"="+getvar(env.vars[func].varin[vin]));
+				setvar(env.vars[func].varin[vin], {'type': 'scalar', 'val': args[vin]} );
+
 			}
 			for (var line in env.vars[func].val) {
-				console.log('a='+getvar('a'));
-				exec_statement(env.vars[func].val[line]);
+				execStatement(env.vars[func].val[line]);
 			}
-			var myRetArgs=Object.create(env.vars[func].varout);
-			for (var i in myRetArgs){
-				myRetArgs[i]=getvar(myRetArgs[i]); //Populate return vars from current stack frame
+			var myRetVals=[];
+
+
+			for (var i in env.vars[func].varout){
+
+
+				myRetVals.push(getvar(env.vars[func].varout[i]).val); //Populate return vars from current stack frame
+
 			}
 		exitScope();
-		console.log(myRetArgs);
-		return myRetArgs.val;
+
+		return myRetVals;
 }
 		
 function exitScope(){
+
 	popvars=stack.pop();
 	for (var v in popvars){
 		if (getvar(v)!=null){
@@ -130,6 +140,7 @@ function enterScope(){
 }
 
 function getvar(varname){
+
 	for(var i=stack.length-1; i>=0; i--){
 		if (stack[i][varname]!=null){
 			return stack[i][varname];
@@ -139,14 +150,16 @@ function getvar(varname){
 }
 
 function setvar(varname, val){
+
 	if(stack.length>0){
 		stack[stack.length-1][varname]=val;
 	}
 	else env.vars[varname]=val;
-	math[varname]=val;
+	math[varname]=val.val;
 }
 
 function load_locals(){
+
 	for (var localvar in env.vars){
 		try{
 		if(env.vars[localvar].val.hasOwnProperty('_data')){
@@ -158,14 +171,17 @@ function load_locals(){
 }
 	
 function isBareword( word ){
+
 	if(word.match(/^[a-zA-Z]\w*$/)) return true; else return false;
 }
 
 function isScalar( word ){
+
 	if(word.match(/^(\w|[\.\+\-\/\*\(\)])*$/)) return true; else return false;
 }
 	
 function flatten(array) {
+
   var result = [], self = arguments.callee;
   array.forEach(function(item) {
     Array.prototype.push.apply(
@@ -176,7 +192,8 @@ function flatten(array) {
   return result;
 };
 
-function next_semantic_block( obj, index ){
+function nextSemanticBlock( obj, index ){
+
 	//Returns the start and end index of the next semantic block [start,end]
 	var start_ind;
 	var blocked='';
@@ -206,10 +223,11 @@ function next_semantic_block( obj, index ){
 	return false;
 }
 
-function has_semantic_block( obj, type, index){//type can be (, [, {
+function hasSemanticBlock( obj, type, index){//type can be (, [, {
+
 	var n;
 	for(var i=index; i<obj.length;){
-		n=next_semantic_block(obj,i);
+		n=nextSemanticBlock(obj,i);
 		if(n){
 			if(obj[n[0]] == type){
 				return n[0];
@@ -223,7 +241,7 @@ function has_semantic_block( obj, type, index){//type can be (, [, {
 
 var binary_ops = ['+', '-', '*', '/', '^', '&', '|', '&&', '||'];
 var comparison_ops = ['>','<'];
-var specials = [',', '=', ';', '~', ' '];
+var specials = [',', '=', ';', '~', ' ', '\t'];
 var blockers = ['[', ']', '(', ')', '{', '}'];
 
 var all_tokens = binary_ops;
@@ -233,6 +251,7 @@ all_tokens.push(blockers);
 all_tokens = flatten(all_tokens);
 
 function preparse( str ){
+
 	var i=0;
 	var saved=0;
 	var escaped_index;
@@ -266,17 +285,19 @@ function preparse( str ){
 	return parsed_str;
 }
 
-function postparse( str ){
+function postParse( str ){
+
 	return str.replace(/%(\w)%/g,function(a,b){return parse_helper['%'+b+'%'];});
 	}
 
-function tokenize_str( str, token ){
+function tokenizeStr( str, token ){
+
 	var sarr=[];
 	var spl=String(str).split(token);
 	for (var i=0; i<spl.length-1; i++){
 		if (spl[i]!='')
 		sarr.push(spl[i]);
-		if(token!=' ')
+		if(token!=' ' && token!='\t')
 		sarr.push(token);
 	}
 	sarr.push(spl[spl.length-1]);
@@ -284,13 +305,14 @@ function tokenize_str( str, token ){
 }
 
 function tokenize( line, tokens ){
-	var arr=tokenize_str(line, tokens[0]);
+
+	var arr=tokenizeStr(line, tokens[0]);
 	var tmparr;
 	for (var t=1; t<tokens.length; t++){
 		tmparr=flatten(arr);
 		arr=[];
 		for (var str in tmparr){
-			arr.push(tokenize_str( tmparr[str], tokens[t] ));
+			arr.push(tokenizeStr( tmparr[str], tokens[t] ));
 		}
 	}
 	arr=flatten(arr);
@@ -300,9 +322,10 @@ function tokenize( line, tokens ){
 	return arr;
 }
 
-function structure_array(split_index){
+function structureArray(split_index){
+
 	//This creates a semantic block array
-	range=next_semantic_block(split_index, has_semantic_block(split_index,'[',0));
+	range=nextSemanticBlock(split_index, hasSemanticBlock(split_index,'[',0));
 	var top=range[1]-2;
 	for (var i = range[0]+1; i<top; i++){
 		if (isScalar(split_index[i]) && isScalar(split_index[i+1])){
@@ -313,18 +336,20 @@ function structure_array(split_index){
 	return split_index;
 }
 
-function merge_to_array(split_array){
+function mergeToArray(split_array){
+
 	//Merges comma separated syntactic list into a js array
 	return split_array.join('').split(',');
 }
 
-function exec_statement( line ){
+function execStatement( line ){
+
 	try{
 		parsed_line=preparse(line);
 		split_line = tokenize(parsed_line, all_tokens);
 		
 		for(var i in split_line){
-			split_line[i]=postparse(split_line[i]);
+			split_line[i]=postParse(split_line[i]);
 		}
 		if(split_line[0]=="for"){
 			
@@ -332,7 +357,7 @@ function exec_statement( line ){
 		
 		//User defined functions
 		else if(split_line[0]=="function"){
-			console.log("Found a function");
+
 			attachFunc(split_line);
 				
 		}
@@ -367,13 +392,13 @@ function exec_statement( line ){
 				}
 			if(data['y'].hasOwnProperty('_data')){
 				data['y'] = data['y']._data;
-				console.log("I did something");
+
 				}
-			console.log(data);
+
 			d3_plot(data,type);
 		}
 		else if(split_line[0]=="plot"){
-			args = next_semantic_block(split_line, has_semantic_block(split_line, '(', 0));
+			args = nextSemanticBlock(split_line, hasSemanticBlock(split_line, '(', 0));
 			datas=[]; styles=[];
 			data_num=0;
 			for( var i=args[0]; i<args[1]-1; i++){
@@ -386,20 +411,21 @@ function exec_statement( line ){
 
 		else if (split_line.indexOf('=')>0 && split_line[split_line.indexOf('=')+1]!='=' && split_line[split_line.indexOf('=')-1]!='<' && split_line[split_line.indexOf('=')-1]!='>' && split_line[split_line.indexOf('=')-1]!='~'){
 			//Yay! We've found an assignment!
-			if( 1==1 ){
-			varname=split_line.slice(0,split_line.indexOf('=')).join('');
-			console.log("Assigning "+varname);
+			if( 1==1 ){ //If scalar assignment. Probably something like isScalar(split_line[0])
+			varname=split_line.slice(0,split_line.indexOf('=')).join(''); //This may or may not be necessary
 			tmpvar={};
 			expr=split_line.slice(split_line.indexOf('=')+1);
-			if(has_semantic_block(split_line,'[',0)){
-				expr=structure_array(expr);
+			if(hasSemanticBlock(split_line,'[',0)){
+				expr=structureArray(expr);
 			}
-			console.log(expr.join(''));
-			tmpvar['val'] = eval_expr( expr.join('') );
+
+			varnamestack.push(varname);// Workaround for overwritten varname. TODO: Think of better solution.
+			tmpvar['val'] = evalExpr( expr.join('') );
 			tmpvar['type']='scalar';
+			varname=varnamestack.pop();
 			setvar(varname,tmpvar);
 			math[varname]=tmpvar.val;
-			console.log(varname+"="+getvar(varname)['val']);
+
 			return getvar(varname)['val'];
 			}
 			//else if( /*obj_prop*/ ){
@@ -410,7 +436,7 @@ function exec_statement( line ){
 			//}
 
 		}
-		return eval_expr(line);
+		return evalExpr(line);
 	
 	}
 	catch(err){
@@ -419,11 +445,11 @@ function exec_statement( line ){
 	//math.eval(line);
 }
 
-function eval_expr( expr ){
+function evalExpr( expr ){
 	try{
 		return math.eval(expr);
 	}
-	catch(err){ return expr };
+	catch(err){ return expr; };
 }
 
 function set_tab(tab){
@@ -435,6 +461,6 @@ function run_file(tab){//tab is an int
 	env.runtime.code=mycode.split('\n');
 	env.runtime.linenum=0;
 	for (; env.runtime.linenum<env.runtime.code.length; env.runtime.linenum++){
-		exec_statement(env.runtime.code[env.runtime.linenum]);
+		execStatement(env.runtime.code[env.runtime.linenum]);
 	}
 }
