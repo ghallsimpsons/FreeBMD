@@ -205,8 +205,8 @@
 	});
 
 	$('#run').click(function() {
-		env['tabs'][0].code = codemir.getValue();
-		run_file(0);
+		env['tabs'][env.currentTab].code = codemir.getValue();
+		run_file();
 	});
 
 	$('#save').click(function() {
