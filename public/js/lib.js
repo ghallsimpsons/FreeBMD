@@ -307,7 +307,13 @@ all_tokens.push(blockers);
 all_tokens = flatten(all_tokens);
 
 function preparse( str ){
-
+	/* The first step of the tokenization process is removing
+	 * comments from the line and then replacing strings with
+	 * a placeholder. This makes parsing easier, since we don't
+	 * need to worry about tokens contained in strings.
+	 * Expects: A single line of code
+	 * Returns: The line with comments removed and strings replaced
+	 */
 	var i=0;
 	var saved=0;
 	var escaped_index;
@@ -342,12 +348,22 @@ function preparse( str ){
 }
 
 function postParse( str ){
-
+	/* Returns the strings removed during preparse
+	 * with their initial values.
+	 * Expects: a string with %n% variables
+	 * Returns: The string with original values
+	 */
 	return str.replace(/%(\w)%/g,function(a,b){return parse_helper['%'+b+'%'];});
 	}
 
 function tokenizeStr( str, token ){
-
+	/* The second step in tokenization is breaking the
+	 * string into lists with elements deliminated by
+	 * the given token. See also: tokenize.
+	 * Expects: line as a string or list and a token at which
+	 * 	to split the line.
+	 * Returns: list with members split at the given token
+	 */
 	var sarr=[];
 	var spl=String(str).split(token);
 	for (var i=0; i<spl.length-1; i++){
@@ -361,12 +377,19 @@ function tokenizeStr( str, token ){
 }
 
 function tokenize( line, tokens ){
-
+	/* This subroutine is the main functions for tokenizing
+	 * input strings. It calles tokenizeStr once for every
+	 * token in tokens.
+	 * Expects: line as a string and a list of tokens to split
+	 * Returns: list containing original line, split at tokens
+	 */
 	var arr=tokenizeStr(line, tokens[0]);
 	var tmparr;
 	for (var t=1; t<tokens.length; t++){
-		tmparr=flatten(arr);
+		tmparr=flatten(arr); // TODO: What is the perfomance hit of repeated flattening?
 		arr=[];
+		// Take the previously tokenized string and again tokenize each element
+		// with the new token, preserving the old splits.
 		for (var str in tmparr){
 			arr.push(tokenizeStr( tmparr[str], tokens[t] ));
 		}
@@ -379,27 +402,39 @@ function tokenize( line, tokens ){
 }
 
 function structureArray(split_index){
-
-	//This creates a semantic block array
+	/* This function separates array elements in a tokenized list
+	 * by comma tokens for easier parsing.
+	 * Expects: a tokenized line of form ['arr','[','scalar1','scalar2',']']
+	 * Returns: ['arr','[','scalar1',',','scalar2',']']
+	 */
 	range=nextSemanticBlock(split_index, hasSemanticBlock(split_index,'[',0));
-	var top=range[1]-2;
-	for (var i = range[0]+1; i<top; i++){
+	var topp=range[1]-2;
+	for (var i = range[0]+1; i<topp; i++){
 		if (isScalar(split_index[i]) && isScalar(split_index[i+1])){
 			split_index.splice(i+1,0,',');
-			i++; top++;
+			i++; topp++;
 		}
 	}
 	return split_index;
 }
 
 function mergeToArray(split_array){
-
-	//Merges comma separated syntactic list into a js array
+	/* Trivial helper function to take an array processed by
+	 * structureArray and return a javascript array for use
+	 * by mathjs. TODO: This seems silly in retrospect. Is there a reason I did this?
+	 * Expects: list of form ['el1',',','el2']
+	 * Returns: ['el1','el2']
+	 */
 	return split_array.join('').split(',');
 }
 
 function execStatement( line ){
-
+	/* Heart of FreeBMD. This function takes a line of BMD code
+	 * and returns the processed value. This may be called recursively
+	 * if, for instance, the input line contains another function call.
+	 * Expects: Line of valid FreeBMD code.
+	 * Returns: value of executed code.
+	 */
 	try{
 		parsed_line=preparse(line);
 		split_line = tokenize(parsed_line, all_tokens);
@@ -413,7 +448,6 @@ function execStatement( line ){
 		
 		//User defined functions
 		else if(split_line[0]=="function"){
-
 			attachFunc(split_line);
 				
 		}
@@ -502,6 +536,12 @@ function execStatement( line ){
 }
 
 function evalExpr( expr ){
+	/* Attemps to evaluate the expression using mathjs.
+	 * If mathjs is unable to evaluate the expression,
+	 * We just return the initial expression.
+	 * Expects: Expression string.
+	 * Returns: evaluated expression if possible, or expression
+	 */
 	try{
 		return math.eval(expr);
 	}
@@ -509,11 +549,24 @@ function evalExpr( expr ){
 }
 
 function set_tab(tab){
+	/* Function for switching between bulk-code tabs.
+	 * Expects: integer representing tab num.
+	 * Returns: TODO: true if success, else false
+	 */
 	env.currentTab=tab;
 }
 
-function run_file(tab){//tab is an int
-	mycode=env.tabs[env.currentTab].code;
+function run_file(tab){
+	/* Runs the code currently in the specified tab.
+	 * If no tab is specified, current tab is used.
+	 * Expects: integer representation of tab, or no arg
+	 * Returns: N/A
+	 */
+	if(!tab){tab=env.currentTab;}
+	else if(tab>=env.tabs.length || tab<0){
+		throw("Error: Invalid tab.");
+	}
+	mycode=env.tabs[tab].code;
 	env.runtime.code=mycode.split('\n');
 	env.runtime.linenum=0;
 	for (; env.runtime.linenum<env.runtime.code.length; env.runtime.linenum++){
