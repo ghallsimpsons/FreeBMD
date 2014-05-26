@@ -6,7 +6,6 @@ var express = require("express");
 var cons = require('consolidate');
 var app = express();
 
-console.log("Do I work?");
 app.engine('html', cons.hogan);
 app.set('view engine', 'html');
 app.set('views', __dirname + '/views');
@@ -16,6 +15,9 @@ app.use(express.bodyParser());
 
 app.get('/', function(request, response) {
 	return response.render('index', {});
+});
+app.get('/test', function(request, response) {
+	return response.render('test', {});
 });
 
 app.post('/save', function(request, response) {

@@ -556,7 +556,7 @@ function set_tab(tab){
 	env.currentTab=tab;
 }
 
-function run_file(tab){
+function runFile(tab){
 	/* Runs the code currently in the specified tab.
 	 * If no tab is specified, current tab is used.
 	 * Expects: integer representation of tab, or no arg
