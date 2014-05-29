@@ -1,6 +1,6 @@
 function unit_tests(){
 	var err=[];
-	test_functions='function [x] = mysum[a,b,c]\nx=a+b+c\n  end\nfunction [x] = dsum[a,b,c]\n	x=2*(a+b+c)\n  end\n  \nfunction [x] = tsum[a,b,c]\n	m=mysum(a,b,c)\n    n=dsum(a,b,c)\n    x=m+n\n  end\n  \nfunction [x,y] = momentOfTruth[a,b,c,d]\n	x=a+b\n    y=c+d\n  end';
+	test_functions='function x = mysum(a,b,c)\nx=a+b+c\n  end\nfunction [x] = dsum(a,b,c)\n	x=2*(a+b+c)\n  end\n  \nfunction [x] = tsum(a,b,c)\n	m=mysum(a,b,c)\n    n=dsum(a,b,c)\n    x=m+n\n  end\n  \nfunction [x,y] = momentOfTruth(a,b,c,d)\n	x=a+b\n    y=c+d\n  end';
 	//Test basic math
 	try{
 		a=execStatement("2+2");
@@ -52,6 +52,47 @@ function unit_tests(){
 	catch(e){
 		err.push(e);
 	}	
+	
+	//Test loops, continue, break, etc
+	try{
+		// Calculate factorial using while loops
+		var whileTest='function x = whileTest(a)\nx=1\nn=a\nwhile(n>0)\nx=n*x\nn=n-1\nend\nend';
+		env.tabs[0].code=whileTest;
+		runFile(0);
+		a=execStatement("whileTest(4)");
+		if(a!=24){
+			throw("Error 9: While loops failed. a should be 24, but was "+a);
+		}
+		// Break factorial at n=2
+		var breakTest='function x = breakTest(a)\nx=1\nn=a\nwhile(n>0)\nif n==2\nbreak\nend\nx=n*x\nn=n-1\nend\nend';
+		env.tabs[0].code=breakTest;
+		runFile(0);
+		a=execStatement("breakTest(4)");
+		if(a!=12){
+			throw("Error 9: Breaking loops failed. a should be 12, but was "+a);
+		}
+		//Calculate factorial using for loops
+		var forTest='function x = forTest(a)\nx=1\nfor n=1:a\nx=n*x\nend\nend';
+		env.tabs[0].code=forTest;
+		runFile(0);
+		a=execStatement("forTest(4)");
+		if(a!=24){
+			throw("Error 9: For loops failed. a should be 24, but was "+a);
+		}
+		//Calculate even factorial using continue statement
+		var continueTest='function x = continueTest(a)\nx=1\nfor n=1:a\nif mod(n,2)==1\ncontinue\nend\nx=n*x\nend\nend';
+		env.tabs[0].code=continueTest;
+		runFile(0);
+		a=execStatement("continueTest(6)");
+		if(a!=48){
+			throw("Error 9: continue statement failed. a should be 48, but was "+a);
+		}
+	}
+	catch(e){
+		err.push(e);
+	}
+
+
 	if(err.length>0)
 		return err;
 	else return "Unit tests passed!";

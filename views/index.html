@@ -48,18 +48,20 @@
 	<div class="documentation-panel">
 		<div class="documentation">
 			<h3>Welcome to FreeBMD</h3>
-			<p class="small">Created by Grant, RJ and Brendan of <a href="http://www.berkeley.edu" target="_blank">Team Berkeley</a> at Big Hack 2014.</p>
-
-			<h4>Free as in Freedom</h4>
-			<p>And open source!</p>
 
 			<h4>No Installation Required</h4>
-			<p>Some of the functionality of other scientific analysis systems, all online.</p>
+			<p>Functionality of other scientific analysis systems, all online.</p>
 
 			<h4>Sharing Ready</h4>
 			<p>Just send your fellow engineer, scientist, or professor your unique URL.</p>
 			<!--<button id="plot_test" class="btn btn-default" data-toggle="modal" data-target="#chart-modal">Example Plot</button>-->
-			
+			<br />
+			------------
+			<strong><h5>New in Version V0.3</h5></strong>
+			<p>You can now use for and while loops, complete with break and continue statements!</p>
+
+			<strong><h5>New in Version V0.2</h5></strong>
+			<p>Define your own functions and control the flow of your programs with if/elseif/else statements.</p>
 		</div>
 	</div>
 	<div class="editor-console-panels">
@@ -136,7 +138,7 @@
     });
 */
     $(function () {
-        var jqconsole = $('#console').jqconsole('FreeBMD V0.2\n', '>>>');
+        var jqconsole = $('#console').jqconsole('FreeBMD V0.3\n', '>>>');
         var startPrompt = function () {
           // Start the prompt with history enabled.
           jqconsole.Prompt(true, function (input) {
@@ -152,7 +154,7 @@
     		{
     			lineNumbers: true,
     			matchBrackets: true,
-	    		value: "% Example Functionality of FreeBMD \n\n % Do simple math \n 3+3 \n\n % Assign variables for later \n g = 9.81 \n\n % Do unit conversion \n 1 cm to inch \n\n % Take determinants \n d = det([1 2; 3 4]) \n\n % Define some functions \nfunction [x] = myAbs[a] \n\tif a>0\n\t\tx=a\n\telseif a==0\n\t\tx=0\n\telse\n\t\tx=-a\n\tend\nend \n\n % Here's a plot of the food consumed \n % over the last 24 hours\n t = 1:24\n food = sin(t)\n plot(t, food)\n",
+	    		value: "% Example Functionality of FreeBMD \n\n % Do simple math \n 3+3 \n\n % Assign variables for later \n g = 9.81 \n\n % Do unit conversion \n 1 cm to inch \n\n % Take determinants \n d = det([1 2; 3 4]) \n\n % Define some functions \nfunction [x] = myAbs(a) \n\tif a>0\n\t\tx=a\n\telseif a==0\n\t\tx=0\n\telse\n\t\tx=-a\n\tend\nend \n\n % Here's a plot of the food consumed \n % over the last 24 hours\n t = 1:24\n food = sin(t)\n plot(t, food)\n",
 	    		mode: "octave",
 	    		theme: "mdn-like"
     		});

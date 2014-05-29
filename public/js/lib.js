@@ -50,25 +50,51 @@ var env = {
 			},*/
 			];
 	
+function forLoop(split_line){
+	/* Handles for loops.
+	 * Expects: tokenized line of format
+	 *	["for","var","=",`list-expression`]
+	 * Returns: N/A
+	 */
+	//enterScope();
+		execStatement(split_line.slice(1).join(''));
+		var index=split_line[1];
+		var indexVals=getvar(index).val._data;
+		var first_line=env.runtime.linenum+1;
+		goToEnd();
+		var last_line=env.runtime.linenum;
+		var ret;
+		for (var n in indexVals){
+			setvar(index,{'type':'scalar','val':indexVals[n]});
+			for(env.runtime.linenum=first_line; env.runtime.linenum<last_line; env.runtime.linenum++){
+				ret=execStatement(env.runtime.code[env.runtime.linenum]);
+				if(ret=="break"){ break; }
+				else if(ret=="continue"){ break; }
+			}
+			if(ret=="break"){ env.runtime.linenum=last_line; break; }
+		}
+	//exitScope();
+
+}
 function whileLoop(split_line){
 	/* Handles user defined while loops
 	 * Expects: tokenized line of format
 	 * 	["while", `boolean expression`]
 	 * Returns: N/A
 	 */
+	//TODO: Should this be locally scoped?
 	var condition=split_line.slice(1).join('');
-	var first_line=++env.runtime.linenum;
+	var first_line=env.runtime.linenum+1;
 	goToEnd();
 	var last_line=env.runtime.linenum;
 	var ret;
 	while(execStatement(condition)){
 		for(env.runtime.linenum=first_line; env.runtime.linenum<last_line; env.runtime.linenum++){
 			ret=execStatement(env.runtime.code[env.runtime.linenum]);
-			console.log(ret);
-			if(ret=="break"){ console.log("ret==break"); break; }
+			if(ret=="break"){ break; }
 			else if(ret=="continue"){ break; }
 		}
-		if(ret=="break"){ console.log("ret still==break");break; }
+		if(ret=="break"){ env.runtime.linenum=last_line; break; }
 	}
 }
 
@@ -158,7 +184,7 @@ function attachFunc(split_line){
 	/* Attaches a user defined function to the
 	 * math object for execution with math.eval().
 	 * Expects: tokenized line of the format
-	 *	["function","[","varOut","]","=","funcName","[","inArg","]"]
+	 *	["function","[","varOut","]","=","funcName","(","inArg",")"]
 	 * Returns: N/A
 	 */
 	if (split_line[1]=="[") { //Function with defined outputs
@@ -166,15 +192,6 @@ function attachFunc(split_line){
 
 		var func=split_line[endArgs+1];
 		env.vars[func]={'type':'function', 'val':[]};
-		/*for (++env.runtime.linenum; env.runtime.linenum<env.runtime.code.length; env.runtime.linenum++){
-			token_line=tokenize(env.runtime.code[env.runtime.linenum],all_tokens);
-			if (token_line[0]=="end"){
-				break;
-			}
-			else{
-				env.vars[func].val.push(env.runtime.code[env.runtime.linenum]);
-			}
-		}*/
 		var begin=env.runtime.linenum+1;
 		goToEnd();
 		env.vars[func].val=env.runtime.code.slice(begin,env.runtime.linenum--);
@@ -188,6 +205,29 @@ function attachFunc(split_line){
 			}
 		}
 		inArgs=nextSemanticBlock(split_line, endArgs+2);
+		var inVar=[];
+		for (var i = inArgs[0]; i<inArgs[1]; i++){
+			if(isBareword(split_line[i])){
+				inVar.push(split_line[i]);
+			}
+			else if(split_line[i]==','){
+				continue;
+			}
+		}
+		math[func]=function(args){ return evalUserFunc(func, Array.slice(arguments)); }
+
+		env.vars[func].varin=inVar;
+
+		env.vars[func].varout=outVar;
+	}
+	else if (isBareword(split_line[1])) { //Function with single output
+		var func=split_line[3];
+		env.vars[func]={'type':'function', 'val':[]};
+		var begin=env.runtime.linenum+1;
+		goToEnd();
+		env.vars[func].val=env.runtime.code.slice(begin,env.runtime.linenum--);
+		var outVar=[split_line[1]];
+		inArgs=nextSemanticBlock(split_line, 4);
 		var inVar=[];
 		for (var i = inArgs[0]; i<inArgs[1]; i++){
 			if(isBareword(split_line[i])){
@@ -410,7 +450,7 @@ function hasSemanticBlock( obj, type, index){
 
 var binary_ops = ['+', '-', '*', '/', '^', '&', '|', '&&', '||'];
 var comparison_ops = ['>','<'];
-var specials = [',', '=', ';', '~', ' ', '\t'];
+var specials = [',', '=', ';', ':', '~', ' ', '\t'];
 var blockers = ['[', ']', '(', ')', '{', '}'];
 
 var all_tokens = binary_ops;
@@ -551,12 +591,11 @@ function execStatement( line ){
 	try{
 		parsed_line=preparse(line);
 		split_line = tokenize(parsed_line, all_tokens);
-		
 		for(var i in split_line){
 			split_line[i]=postParse(split_line[i]);
 		}
 		if(split_line[0]=="for"){
-			
+			forLoop(split_line);
 		}
 		else if(split_line[0]=="while"){
 			whileLoop(split_line);
@@ -565,16 +604,12 @@ function execStatement( line ){
 			return "continue";
 		}
 		else if(split_line[0]=="break"){
-			console.log("Breaking");
-			var err=new Error();
-			console.log(err.stack);
 			return "break";
 		}
 		//User defined functions
 		else if(split_line[0]=="function"){
 			attachFunc(split_line);
 		}
-		
 		// Handle if/elseif/else
 		else if(split_line[0]=="if"){
 			return controlFlow(split_line);
