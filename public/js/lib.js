@@ -49,7 +49,29 @@ var env = {
 				},
 			},*/
 			];
-		
+	
+function whileLoop(split_line){
+	/* Handles user defined while loops
+	 * Expects: tokenized line of format
+	 * 	["while", `boolean expression`]
+	 * Returns: N/A
+	 */
+	var condition=split_line.slice(1).join('');
+	var first_line=++env.runtime.linenum;
+	goToEnd();
+	var last_line=env.runtime.linenum;
+	var ret;
+	while(execStatement(condition)){
+		for(env.runtime.linenum=first_line; env.runtime.linenum<last_line; env.runtime.linenum++){
+			ret=execStatement(env.runtime.code[env.runtime.linenum]);
+			console.log(ret);
+			if(ret=="break"){ console.log("ret==break"); break; }
+			else if(ret=="continue"){ break; }
+		}
+		if(ret=="break"){ console.log("ret still==break");break; }
+	}
+}
+
 function controlFlow(split_line){
 	/* Handles if/elseif/else
 	 * Expects: tokenized line of format
@@ -69,7 +91,10 @@ function controlFlow(split_line){
 				break;
 			}
 			else{
-				execStatement(env.runtime.code[env.runtime.linenum]);
+				ret=execStatement(env.runtime.code[env.runtime.linenum]);
+				if(ret=="break" || ret=="continue"){
+					return ret;
+				}
 			}
 		}
 	}
@@ -97,7 +122,10 @@ function execToEnd(){
 		if (token_line[0]=="end"){
 			break;
 		}
-		execStatement(env.runtime.code[env.runtime.linenum]);
+		ret=execStatement(env.runtime.code[env.runtime.linenum]);
+		if(ret=="break" || ret=="continue"){
+			return ret;
+		}
 	}	
 }
 
@@ -194,7 +222,10 @@ function evalUserFunc(func, args){
 			env.runtime.code=env.vars[func].val; //Load function content into runtime.
 			// Execute function line-by-line
 			for (env.runtime.linenum=0; env.runtime.linenum<env.runtime.code.length; env.runtime.linenum++){
-				execStatement(env.runtime.code[env.runtime.linenum]);
+				var ret=execStatement(env.runtime.code[env.runtime.linenum]);
+				if (ret=="continue"||ret=="break"){
+					return ret;
+				}
 			}
 			// Populate return vars from current stack frame 
 			var myRetVals=[];
@@ -527,7 +558,18 @@ function execStatement( line ){
 		if(split_line[0]=="for"){
 			
 		}
-		
+		else if(split_line[0]=="while"){
+			whileLoop(split_line);
+		}
+		else if(split_line[0]=="continue"){
+			return "continue";
+		}
+		else if(split_line[0]=="break"){
+			console.log("Breaking");
+			var err=new Error();
+			console.log(err.stack);
+			return "break";
+		}
 		//User defined functions
 		else if(split_line[0]=="function"){
 			attachFunc(split_line);
@@ -535,7 +577,7 @@ function execStatement( line ){
 		
 		// Handle if/elseif/else
 		else if(split_line[0]=="if"){
-			controlFlow(split_line);
+			return controlFlow(split_line);
 		}
 
 		//Temporary plotting function for demo
@@ -661,6 +703,9 @@ function runFile(tab){
 	env.runtime.code=mycode.split('\n');
 	env.runtime.linenum=0;
 	for (; env.runtime.linenum<env.runtime.code.length; env.runtime.linenum++){
-		execStatement(env.runtime.code[env.runtime.linenum]);
+		ret = execStatement(env.runtime.code[env.runtime.linenum]);
+		if (ret=="break" || ret=="continue"){
+			return ret;
+		}
 	}
 }
