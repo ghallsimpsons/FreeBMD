@@ -109,3 +109,26 @@
     .jqconsole-output {
         color: black;
     }
+
+html, body {
+	height: 100%;
+}
+
+#app-wrapper {
+	height:100%;
+}
+
+#footer {
+	clear: both;
+	position: relative;
+	z-index: 10;
+	height: 2em;
+	margin-top: -2em;
+	background-color: #FFF;
+	text-align: center;
+}
+
+#footer .trim {
+	background-color:#3D92BE;
+	height:.4em;
+}
