@@ -136,7 +136,7 @@
     });
 */
     $(function () {
-        var jqconsole = $('#console').jqconsole('FreeBMD V0.1\n', '>>>');
+        var jqconsole = $('#console').jqconsole('FreeBMD V0.2\n', '>>>');
         var startPrompt = function () {
           // Start the prompt with history enabled.
           jqconsole.Prompt(true, function (input) {
@@ -152,7 +152,7 @@
     		{
     			lineNumbers: true,
     			matchBrackets: true,
-	    		value: "% Example Functionality of FreeBMD \n\n % Do simple math \n 3+3 \n\n % Assign variables for later \n g = 9.81 \n\n % Do unit conversion \n 1 cm to inch \n\n % Take determinants \n d = det([1 2; 3 4]) \n\n % Here's a plot of the food consumed \n % over the last 24 hours\n t = 1:24\n food = sin(t)\n plot(t, food)\n",
+	    		value: "% Example Functionality of FreeBMD \n\n % Do simple math \n 3+3 \n\n % Assign variables for later \n g = 9.81 \n\n % Do unit conversion \n 1 cm to inch \n\n % Take determinants \n d = det([1 2; 3 4]) \n\n % Define some functions \nfunction [x] = myAbs[a] \n\tif a>0\n\t\tx=a\n\telseif a==0\n\t\tx=0\n\telse\n\t\tx=-a\n\tend\nend \n\n % Here's a plot of the food consumed \n % over the last 24 hours\n t = 1:24\n food = sin(t)\n plot(t, food)\n",
 	    		mode: "octave",
 	    		theme: "mdn-like"
     		});
