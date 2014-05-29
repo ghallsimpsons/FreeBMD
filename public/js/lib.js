@@ -50,6 +50,82 @@ var env = {
 			},*/
 			];
 		
+function controlFlow(split_line){
+	/* Handles if/elseif/else
+	 * Expects: tokenized line of format
+	 * 	["if/elseif",`boolean expression`]
+	 * Returns: N/A
+	 */
+	if(execStatement(split_line.slice(1).join(''))){ //if Expr is true
+		for (++env.runtime.linenum; env.runtime.linenum<env.runtime.code.length; env.runtime.linenum++){
+			token_line=tokenize(env.runtime.code[env.runtime.linenum],all_tokens);
+			if (token_line[0]=="end"){
+				// This should be "safe". If execStament enters another block (e.g. a funciton declaration)
+				// that block handler should increment linenum and only return control to this function once it hits end.
+				break;
+			}
+			else if(token_line[0]=="elseif" || token_line[0]=="else"){
+				goToEnd();
+				break;
+			}
+			else{
+				execStatement(env.runtime.code[env.runtime.linenum]);
+			}
+		}
+	}
+	else{ // if Expr is false
+		for (++env.runtime.linenum; env.runtime.linenum<env.runtime.code.length; env.runtime.linenum++){
+			token_line=tokenize(env.runtime.code[env.runtime.linenum],all_tokens);
+			//Needs to be fixed with a goToElseOrEnd to skip nested keywords.
+			if (token_line[0]=="end"){
+				break;
+			}
+			else if(token_line[0]=="elseif"){
+				controlFlow(token_line);
+				break;
+			}
+			else if(token_line[0]=="else"){
+				execToEnd();
+			}
+		}	
+	}
+}
+
+function execToEnd(){
+	for (++env.runtime.linenum; env.runtime.linenum<env.runtime.code.length; env.runtime.linenum++){
+		token_line=tokenize(env.runtime.code[env.runtime.linenum],all_tokens);
+		if (token_line[0]=="end"){
+			break;
+		}
+		execStatement(env.runtime.code[env.runtime.linenum]);
+	}	
+}
+
+function goToEnd(){
+	/* This goes to the end of a control block. This is more
+	 * tricky than execToEnd, because nested blocks will not
+	 * handle control flow. We must keep track of depth of
+	 * control blocks, and only break on the right "end" statement.
+	 * This function is useful for if, and breaking loops.
+	 * Precondition: env.runtime.linenum!=null
+	 * Postcondition: env.runtime.linenum is set to the location of end
+	 */
+	// We first make a list of control blocks with expect "end statements"
+	blockers=["function", "if", "for", "while", "switch"];
+	var depth=1;
+	for (++env.runtime.linenum; env.runtime.linenum<env.runtime.code.length; env.runtime.linenum++){
+		token_line=tokenize(env.runtime.code[env.runtime.linenum],all_tokens);
+		if (token_line[0]=="end"){
+			depth--;
+		}
+		else if(blockers.indexOf(token_line[0])>=0){
+			depth++;
+		}
+		if (depth==0) break;
+	}	
+	
+}
+
 function attachFunc(split_line){
 	/* Attaches a user defined function to the
 	 * math object for execution with math.eval().
@@ -62,16 +138,18 @@ function attachFunc(split_line){
 
 		var func=split_line[endArgs+1];
 		env.vars[func]={'type':'function', 'val':[]};
-		for (var line = env.runtime.linenum+1; line<env.runtime.code.length; line++){
-			token_line=tokenize(env.runtime.code[line],all_tokens);
+		/*for (++env.runtime.linenum; env.runtime.linenum<env.runtime.code.length; env.runtime.linenum++){
+			token_line=tokenize(env.runtime.code[env.runtime.linenum],all_tokens);
 			if (token_line[0]=="end"){
-				env.runtime.linenum=line;
 				break;
 			}
 			else{
-				env.vars[func].val.push(env.runtime.code[line]);
+				env.vars[func].val.push(env.runtime.code[env.runtime.linenum]);
 			}
-		}
+		}*/
+		var begin=env.runtime.linenum+1;
+		goToEnd();
+		env.vars[func].val=env.runtime.code.slice(begin,env.runtime.linenum--);
 		var outVar=[];
 		for (var i = 2; i<endArgs-1; i++){
 			if(isBareword(split_line[i])){
@@ -111,9 +189,12 @@ function evalUserFunc(func, args){
 			for (var vin in env.vars[func].varin){
 				setvar(env.vars[func].varin[vin], {'type': 'scalar', 'val': args[vin]} );
 			}
+			var oldRuntime=env.runtime.code;//nested function calls overwrite old runtime, so for good measure, clean up after yourself when you're done.
+			var oldLinenum=env.runtime.linenum;
+			env.runtime.code=env.vars[func].val; //Load function content into runtime.
 			// Execute function line-by-line
-			for (var line in env.vars[func].val) {
-				execStatement(env.vars[func].val[line]);
+			for (env.runtime.linenum=0; env.runtime.linenum<env.runtime.code.length; env.runtime.linenum++){
+				execStatement(env.runtime.code[env.runtime.linenum]);
 			}
 			// Populate return vars from current stack frame 
 			var myRetVals=[];
@@ -121,7 +202,8 @@ function evalUserFunc(func, args){
 				myRetVals.push(getvar(env.vars[func].varout[i]).val);
 			}
 		exitScope();
-
+		env.runtime.code=oldRuntime;
+		env.runtime.linenum=oldLinenum;
 		return myRetVals;
 }
 		
@@ -449,9 +531,13 @@ function execStatement( line ){
 		//User defined functions
 		else if(split_line[0]=="function"){
 			attachFunc(split_line);
-				
 		}
 		
+		// Handle if/elseif/else
+		else if(split_line[0]=="if"){
+			controlFlow(split_line);
+		}
+
 		//Temporary plotting function for demo
 		else if(split_line[0]=="plot"){
 			$('#chart-modal').modal('toggle');
@@ -526,7 +612,10 @@ function execStatement( line ){
 			//}
 
 		}
-		return evalExpr(line);
+		else{
+			return evalExpr(line);
+		}
+		return;
 	
 	}
 	catch(err){
@@ -543,9 +632,11 @@ function evalExpr( expr ){
 	 * Returns: evaluated expression if possible, or expression
 	 */
 	try{
+		expr=expr.replace(/\0/g,'');
 		return math.eval(expr);
 	}
-	catch(err){ return expr; };
+	catch(err){ 
+	return err; };
 }
 
 function set_tab(tab){
