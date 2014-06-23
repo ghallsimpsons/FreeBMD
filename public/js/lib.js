@@ -1,5 +1,4 @@
 var math=mathjs();
-var varnamestack=[];//TODO: GET RID OF THIS!
 var parse_helper={};
 
 var env = {
@@ -275,6 +274,7 @@ function evalUserFunc(func, args){
 		exitScope();
 		env.runtime.code=oldRuntime;
 		env.runtime.linenum=oldLinenum;
+		if (myRetVals.length==1) return myRetVals[0];
 		return myRetVals;
 }
 		
@@ -327,11 +327,16 @@ function setvar(varname, val){
 	 * Expects: Variable name, value to assign.
 	 * Returns: N/A
 	 */
+	if (val.val instanceof Error){ // Failsafe
+		math[varname]=(getvar(varname) && getvar(varname).val) || undefined; // Rollback
+		return val.val;
+	}
 	if(stack.length>0){
 		stack[stack.length-1][varname]=val;
 	}
 	else env.vars[varname]=val;
 	math[varname]=val.val;
+	return val.val;
 }
 
 function loadLocals(){
@@ -398,32 +403,41 @@ function nextSemanticBlock( obj, index ){
 	 * and only returning the first block with start>index (see above).
 	 */
 	var start_ind;
-	var blocked='';
-	var depth=0;
+	var blocked=[];
 	for(var i=index; i<obj.length; i++){
-		if(blocked){
-			switch(blocked)
+		if(blocked.length>0){
+			console.log("blocked");
+			switch(blocked[blocked.length-1])
 			{
 				case '[':
-					if(obj[i]==']') if(--depth==0) return [start_ind, i+1];
+					if(obj[i]==']') {
+						blocked.pop();
+						if (blocked.length==0) return [start_ind, i+1];
+					}
 					break;
 				case '(':
-					if(obj[i]==')') if(--depth==0) return [start_ind, i+1];
+					if(obj[i]==')') {
+						blocked.pop();
+						if (blocked.length==0) return [start_ind, i+1];
+					}
 					break;
 				case '{':
-					if(obj[i]=='}') if(--depth==0) return [start_ind, i+1];
+					if(obj[i]=='}') {
+						blocked.pop();
+						if (blocked.length==0) return [start_ind, i+1];
+					}
 					break;
 			}
 		}
 		else if (isBareword(obj[i])) return [i,i+1];
 		//Check for blocking every pass and dive in!
-		if (obj[i]=='['){ blocked='['; if(depth++==0) start_ind=i;}
-		else if(obj[i]=='('){ blocked='('; if(depth++==0) start_ind=i;}
-		else if(obj[i]=='{'){ blocked='{'; if(depth++==0) start_ind=i;}
+		if (obj[i]=='['){ blocked.push('['); if(blocked.length==1) start_ind=i;}
+		else if(obj[i]=='('){ blocked.push('('); if(blocked.length==1) start_ind=i;}
+		else if(obj[i]=='{'){ blocked.push('{'); if(blocked.length==1) start_ind=i;}
 		
 	}
-	if(blocked){
-		throw("ERROR: Unbalanced token `"+blocked+"` in line: `"+obj.join('')+'`');
+	if(blocked.length){
+		throw("ERROR: Unbalanced token(s) `"+blocked+"` in line: `"+obj.join('')+'`');
 	}
 	return false;
 }
@@ -453,11 +467,12 @@ var comparison_ops = ['>','<'];
 var specials = [',', '=', ';', ':', '~', ' ', '\t'];
 var blockers = ['[', ']', '(', ')', '{', '}'];
 
-var all_tokens = binary_ops;
-all_tokens.push(comparison_ops);
-all_tokens.push(specials);
-all_tokens.push(blockers);
-all_tokens = flatten(all_tokens);
+var all_tokens = [].concat(
+	binary_ops,
+	comparison_ops,
+	specials,
+	blockers
+	);
 
 function preparse( str ){
 	/* The first step of the tokenization process is removing
@@ -558,9 +573,49 @@ function structureArray(split_index){
 	/* This function separates array elements in a tokenized list
 	 * by comma tokens for easier parsing.
 	 * Expects: a tokenized line of form ['arr','[','scalar1','scalar2',']']
-	 * Returns: ['arr','[','scalar1',',','scalar2',']']
+	 * Returns: [ 'arr' , '[' , 'scalar1' , ',' , 'scalar2' , ']' ]
 	 */
-	range=nextSemanticBlock(split_index, hasSemanticBlock(split_index,'[',0));
+	range=nextSemanticBlock(split_index, hasSemanticBlock(split_index,'[',0) || 0);
+	if (!range){
+		return split_index;
+	}
+	var topp=range[1]-2;
+	for (var i = range[0]+1; i<topp; i++){
+		if (isScalar(split_index[i]) && isScalar(split_index[i+1])){
+			split_index.splice(i+1,0,',');
+			i++; topp++;
+		}
+	}
+	return split_index;
+}
+
+function nextTokenSkipBlock(split_array, index, token){
+	// TODO: THIS FUNCTION IS UNTESTED
+	/* Returns the next instance of `token` after `index`
+	 * subject to the constraint that `token` is not
+	 * contained in a semantic block.
+	 * This function is useful for separating arguments to function calls.
+	 * Expects: a tokenized line, an index to start at, and a token to locate
+	 * Returns: the index of next token instance or -1 if not found
+	 */
+	while (index < split_array.length){
+		tok_index = split_array.indexOf(token,index);
+		block_range = nextSemanticBlock(split_array,index) || [0,0];
+		if ( tok_index < block_range[0] || tok_index > block_range[1] ){
+			return tok_index;
+		}
+		else index = block_range[1];
+	}
+	return -1;
+}
+
+function structureParams(split_index){
+	/* This function separates array elements in a function call
+	 * and returns a comma separated list of parameters.
+	 * Expects: a tokenized line of form accessor( param1 , returns(param2) )
+	 * Returns: [ param1 , returns(param2) ]
+	 */
+	range=nextSemanticBlock(split_index, hasSemanticBlock(split_index,'(',0));
 	var topp=range[1]-2;
 	for (var i = range[0]+1; i<topp; i++){
 		if (isScalar(split_index[i]) && isScalar(split_index[i+1])){
@@ -588,6 +643,7 @@ function execStatement( line ){
 	 * Expects: Line of valid FreeBMD code.
 	 * Returns: value of executed code.
 	 */
+	console.log(execStatement.caller);
 	try{
 		parsed_line=preparse(line);
 		split_line = tokenize(parsed_line, all_tokens);
@@ -664,29 +720,39 @@ function execStatement( line ){
 
 		else if (split_line.indexOf('=')>0 && split_line[split_line.indexOf('=')+1]!='=' && split_line[split_line.indexOf('=')-1]!='<' && split_line[split_line.indexOf('=')-1]!='>' && split_line[split_line.indexOf('=')-1]!='~'){
 			//Yay! We've found an assignment!
-			if( 1==1 ){ //If scalar assignment. Probably something like isScalar(split_line[0])
-			varname=split_line.slice(0,split_line.indexOf('=')).join(''); //This may or may not be necessary
-			tmpvar={};
-			expr=split_line.slice(split_line.indexOf('=')+1);
-			if(hasSemanticBlock(split_line,'[',0)){
-				expr=structureArray(expr);
-			}
-
-			varnamestack.push(varname);// Workaround for overwritten varname. TODO: Think of better solution.
-			tmpvar['val'] = evalExpr( expr.join('') );
-			tmpvar['type']='scalar';
-			varname=varnamestack.pop();
-			setvar(varname,tmpvar);
-			math[varname]=tmpvar.val;
-
-			return getvar(varname)['val'];
+			if( split_line.indexOf('=')==1 && isBareword(split_line[0]) ){ // local scalar assignment
+				var varname=split_line[0]; 
+				var tmpvar={};
+				expr=split_line.slice(split_line.indexOf('=')+1);
+				if(hasSemanticBlock(split_line,'[',0)){
+					//expr=structureArray(expr);
+				}
+				tmpvar['val'] = evalExpr( expr.join('') );
+				tmpvar['type'] = 'scalar';
+				return setvar(varname,tmpvar);
 			}
 			//else if( /*obj_prop*/ ){
 				
 			//}
-			//else if( /*matrix*/ ){
-			
-			//}
+			else if( split_line[1]=="(" ){ //Matrix element assignment
+				var indices = nextSemanticBlock(split_line, 1);
+				// Math.js uses [] matrix syntax since it natively uses () for function assignment, matlab uses ()
+				console.log( indices );
+				split_line[ indices[0] ] = "[";
+				split_line[ indices[1]-1 ] = "]";
+				var varname = split_line[0];
+				var tmpvar={'type': 'scalar'};
+				console.log(split_line.join(''));
+				tmpvar['val'] = evalExpr( split_line.join('') );
+				return setvar(varname, tmpvar);
+			}
+			else if( split_line[1]="[" ){
+				var varname = split_line[0];
+				var tmpvar={'type': 'scalar'};
+				tmpvar['val'] = evalExpr( line );
+				return setvar(varname, tmpvar);
+			}
+			else throw("SyntaxError: Invalid left hand side of assignment!");
 
 		}
 		else{
