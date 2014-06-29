@@ -737,12 +737,10 @@ function execStatement( line ){
 			else if( split_line[1]=="(" ){ //Matrix element assignment
 				var indices = nextSemanticBlock(split_line, 1);
 				// Math.js uses [] matrix syntax since it natively uses () for function assignment, matlab uses ()
-				console.log( indices );
 				split_line[ indices[0] ] = "[";
 				split_line[ indices[1]-1 ] = "]";
 				var varname = split_line[0];
 				var tmpvar={'type': 'scalar'};
-				console.log(split_line.join(''));
 				tmpvar['val'] = evalExpr( split_line.join('') );
 				return setvar(varname, tmpvar);
 			}
