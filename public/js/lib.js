@@ -1,6 +1,8 @@
 var math=mathjs();
 var parse_helper={};
 
+if (!Array.slice) {Array.slice = Array.prototype.slice;}
+
 var env = {
 	'currentTab': 0,
 	'tabs': [
