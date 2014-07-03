@@ -1,8 +1,6 @@
 var math=mathjs();
 var parse_helper={};
 
-if (!Array.slice) {Array.slice = Array.prototype.slice;}
-
 var env = {
 	'currentTab': 0,
 	'tabs': [
@@ -215,7 +213,7 @@ function attachFunc(split_line){
 				continue;
 			}
 		}
-		math[func]=function(args){ return evalUserFunc(func, Array.slice(arguments)); }
+        math[func]=function(args){ return evalUserFunc(func, Array.prototype.slice.call(arguments)); }
 
 		env.vars[func].varin=inVar;
 
@@ -238,7 +236,7 @@ function attachFunc(split_line){
 				continue;
 			}
 		}
-		math[func]=function(args){ return evalUserFunc(func, Array.slice(arguments)); }
+		math[func]=function(args){ return evalUserFunc(func, Array.prototype.slice.call(arguments)); }
 
 		env.vars[func].varin=inVar;
 
