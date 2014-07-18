@@ -5,7 +5,9 @@
 <script type="text/javascript" src="/js/lib.js"></script>
 <script type="text/javascript" src="/js/test.js"></script>
 <script type="text/javascript">
-	document.getElementById("test_results").innerHTML=unit_tests();
+	var err = unit_tests().join('<br/>');
+	console.log(err);
+	document.getElementById("test_results").innerHTML=unit_tests(err);
 </script>
 </body>
 </html>
