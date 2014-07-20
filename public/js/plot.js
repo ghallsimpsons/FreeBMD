@@ -1,4 +1,4 @@
-function d3_plot (data, type) {
+function new_plot (data, type) {
 	var myData= [];
 	myData[0] = {};
 	myData[0].values = [];
@@ -18,12 +18,12 @@ function d3_plot (data, type) {
 	  ;
 
 	  chart.xAxis     //Chart x-axis settings
-	      .axisLabel('Time (ms)')
-	      .tickFormat(d3.format(',r'));
+	      .axisLabel('x')
+	      .tickFormat(d3.format(',.0f'));
 
 	  chart.yAxis     //Chart y-axis settings
-	      .axisLabel('Food')
-	      .tickFormat(d3.format('.02f'));
+	      .axisLabel('y')
+	      .tickFormat(d3.format(',.0f'));
 
 	  d3.select('#chart svg')    //Select the <svg> element you want to render the chart in.   
 	      .datum(myData)         //Populate the <svg> element with chart data...
@@ -33,7 +33,10 @@ function d3_plot (data, type) {
 	  nv.utils.windowResize(function() { chart.update() });
 	  return chart;
 }
+
+
 	
+function append_plot (data, chart) {}
 
 
 // 	var chart = ' ';

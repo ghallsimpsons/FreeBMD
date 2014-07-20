@@ -40,7 +40,7 @@ app.post('/save', function(request, response) {
 });
 
 
-app.get('/:secret', function(request, response) {
+app.get('/notebook/:secret', function(request, response) {
 	var secret = request.params.secret;
 	pg.connect(connString, function(err, client, done) {
 		if(err) response.send("Could not connect to DB: " + err);

@@ -704,7 +704,7 @@ function execStatement( line ){
 
 				}
 
-			d3_plot(data,type);
+			new_plot(data,type);
 		}
 		else if(split_line[0]=="plot"){
 			args = nextSemanticBlock(split_line, hasSemanticBlock(split_line, '(', 0));
@@ -714,7 +714,7 @@ function execStatement( line ){
 				if (datas[0]){
 					if (datas['x']){
 						if(datas['y']){}}}}
-			chart = d3_plot(data,style);
+			chart = new_plot(data,style);
 			setTimeout(10000, chart.update());
 		}
 
