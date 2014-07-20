@@ -9,7 +9,7 @@ function new_plot (data, type) {
 
 	/*These lines are all chart setup.  Pick and choose which chart features you want to utilize. */
 	  var chart = nv.models.lineChart()
-	                //.margin({left: 100})  //Adjust chart margins to give the x-axis some breathing room.
+	                .margin({left: 100})  //Adjust chart margins to give the x-axis some breathing room.
 	                .useInteractiveGuideline(true)  //We want nice looking tooltips and a guideline!
 	                .transitionDuration(350)  //how fast do you want the lines to transition?
 	                .showLegend(true)       //Show the legend, allowing users to turn on/off line series.
