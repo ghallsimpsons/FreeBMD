@@ -2,14 +2,21 @@ function new_plot (data, type) {
 	var myData= [];
 	myData[0] = {};
 	myData[0].values = [];
+
+	// Format data
 	for(var i in data.x){
 		myData[0].values.push({'x':data.x[i], 'y':data.y[i]});
 	}
-	console.log('data is: '+myData[0].values);
+
+	switch (type) {
+		case 'line':
+
+			break;
+	}
 
 	/*These lines are all chart setup.  Pick and choose which chart features you want to utilize. */
 	  var chart = nv.models.lineChart()
-	                .margin({left: 100})  //Adjust chart margins to give the x-axis some breathing room.
+	                //.margin({left: 100})  //Adjust chart margins to give the x-axis some breathing room.
 	                .useInteractiveGuideline(true)  //We want nice looking tooltips and a guideline!
 	                .transitionDuration(350)  //how fast do you want the lines to transition?
 	                .showLegend(true)       //Show the legend, allowing users to turn on/off line series.
@@ -18,11 +25,11 @@ function new_plot (data, type) {
 	  ;
 
 	  chart.xAxis     //Chart x-axis settings
-	      .axisLabel('x')
+	      //.axisLabel('x')
 	      .tickFormat(d3.format(',.0f'));
 
 	  chart.yAxis     //Chart y-axis settings
-	      .axisLabel('y')
+	      //.axisLabel('y')
 	      .tickFormat(d3.format(',.0f'));
 
 	  d3.select('#chart svg')    //Select the <svg> element you want to render the chart in.   
