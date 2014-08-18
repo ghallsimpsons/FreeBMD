@@ -20,6 +20,8 @@ app.get('/test', function(request, response) {
 	return response.render('test', {});
 });
 
+
+//
 app.post('/save', function(request, response) {
 	// if(request.method == 'POST') {
 	console.log("[200]" + request.method + "to" + request.url);
@@ -34,6 +36,38 @@ app.post('/save', function(request, response) {
 			if(err) return response.send(err);
 			response.writeHead(200, "OK", {'Content-Type': 'text/html'});
 		    response.end();
+		});
+	});
+
+});
+
+
+
+app.post('/fork', function(request, response) {
+	
+	var token = Math.floor(Math.random()*10000).toString()
+		secret = Math.floor(Math.random()*10000).toString(),
+		env = request.body.env;
+
+	console.log("Fork request");
+
+	// Connect to DB and copy environment with new secret
+
+	pg.connect(connString, function(err, client, done) {
+		if(err) response.send("Could not connect to DB: " + err);
+
+		// TODO: check that secret does not overwrite another secret
+		//
+		// client.query('SELECT environment FROM sessions WHERE secret = $1', [secret], function(err, result) {
+		// 	done();
+		// 	if(err) return response.send(err);
+		// 	if(result.rows.length == 0) 
+		// });
+
+		client.query('INSERT INTO sessions VALUES($1, $2, $3, current_timestamp, current_timestamp)', [token, secret, env], function(err, result) {
+			done();
+			if(err) return response.send(err);
+			return response.redirect("/notebook/" + secret);
 		});
 	});
 
