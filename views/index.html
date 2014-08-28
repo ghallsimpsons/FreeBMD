@@ -121,14 +121,13 @@
 
 <!-- Window Scripts -->
 <script type="text/javascript">
-    //$('#console').jqconsole('welcomeString', 'promptLabel', 'continueLabel');
 
     {{#env}}
     	window.env = {{{env}}};
     {{/env}}
 
     loadLocals();
-    
+
     $(function () {
         var jqconsole = $('#console').jqconsole('FreeBMD V0.3\n', '>>>');
         var startPrompt = function () {
