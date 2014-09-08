@@ -20,8 +20,8 @@ function attachGroup(group){
 //{{{2 Function definitions
 //{{{3 MyAddPrimitive
 var MyAddPrimitive = new BMD_FUNC("my_add");
-MyAddPrimitive.desc = "
-    This function is a test function which adds
+MyAddPrimitive.desc = "\
+    This function is a test function which adds \
     n arguments together. Must have >0 args";
 MyAddPrimitive.eval = function(){
     var arglist = Array.prototype.slice.call(arguments);
