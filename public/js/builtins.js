@@ -38,7 +38,7 @@ MyAddPrimitive.eval = function(){
 //{{{2 Export
 var test_funcs = [
     MyAddPrimitive,
-]
+];
 
 attachGroup(test_funcs);
 //}}}
