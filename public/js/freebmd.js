@@ -406,7 +406,6 @@ function nextSemanticBlock( obj, index ){
 	var blocked=[];
 	for(var i=index; i<obj.length; i++){
 		if(blocked.length>0){
-			console.log("blocked");
 			switch(blocked[blocked.length-1])
 			{
 				case '[':
@@ -643,7 +642,6 @@ function execStatement( line ){
 	 * Expects: Line of valid FreeBMD code.
 	 * Returns: value of executed code.
 	 */
-	console.log(execStatement.caller);
 	try{
 		parsed_line=preparse(line);
 		split_line = tokenize(parsed_line, all_tokens);
