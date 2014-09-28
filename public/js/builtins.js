@@ -15,7 +15,6 @@ function attachGroup(group){
     }
 }
 
-//}}}
 //{{{1 Test function
 //{{{2 Function definitions
 //{{{3 MyAddPrimitive
@@ -33,13 +32,9 @@ MyAddPrimitive.eval = function(){
     }
     return sum;
 }
-//}}}
-//}}}
 //{{{2 Export
 var test_funcs = [
     MyAddPrimitive,
 ];
 
 attachGroup(test_funcs);
-//}}}
-//}}}
