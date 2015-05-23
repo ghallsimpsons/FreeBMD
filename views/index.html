@@ -135,7 +135,7 @@
           // Start the prompt with history enabled.
           jqconsole.Prompt(true, function (input) {
             // Output input with the class jqconsole-output.
-            jqconsole.Write(execStatement(input) + '\n', 'jqconsole-output');
+            jqconsole.Write(execLine(input) + '\n', 'jqconsole-output');
             // Restart the prompt.
             startPrompt();
           });

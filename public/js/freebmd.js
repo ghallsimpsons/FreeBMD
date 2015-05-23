@@ -19,7 +19,7 @@ var env = {
 			'type': 'scalar',
 			'val': math.pi,
 			},
-		'i': {
+		'j': {
 			'type': 'scalar',
 			'val': math.i,
 			},
@@ -55,24 +55,22 @@ function forLoop(split_line){
 	 *	["for","var","=",`list-expression`]
 	 * Returns: N/A
 	 */
-	//enterScope();
-		execStatement(split_line.slice(1).join(''));
-		var index=split_line[1];
-		var indexVals=getvar(index).val._data;
-		var first_line=env.runtime.linenum+1;
-		goToEnd();
-		var last_line=env.runtime.linenum;
-		var ret;
-		for (var n in indexVals){
-			setvar(index,{'type':'scalar','val':indexVals[n]});
-			for(env.runtime.linenum=first_line; env.runtime.linenum<last_line; env.runtime.linenum++){
-				ret=execStatement(env.runtime.code[env.runtime.linenum]);
-				if(ret=="break"){ break; }
-				else if(ret=="continue"){ break; }
-			}
-			if(ret=="break"){ env.runtime.linenum=last_line; break; }
-		}
-	//exitScope();
+    execStatement(stringify(split_line.slice(1)));
+    var index=split_line[1];
+    var indexVals=getvar(index).val._data;
+    var first_line=env.runtime.linenum+1;
+    goToEnd();
+    var last_line=env.runtime.linenum;
+    var ret;
+    for (var n in indexVals){
+        setvar(index,{'type':'scalar','val':indexVals[n]});
+        for(env.runtime.linenum=first_line; env.runtime.linenum<last_line; env.runtime.linenum++){
+            ret=execLine(env.runtime.code[env.runtime.linenum]);
+            if(ret=="break"){ break; }
+            else if(ret=="continue"){ break; }
+        }
+        if(ret=="break"){ env.runtime.linenum=last_line; break; }
+    }
 
 }
 function whileLoop(split_line){
@@ -81,15 +79,14 @@ function whileLoop(split_line){
 	 * 	["while", `boolean expression`]
 	 * Returns: N/A
 	 */
-	//TODO: Should this be locally scoped?
-	var condition=split_line.slice(1).join('');
+	var condition=stringify(split_line.slice(1));
 	var first_line=env.runtime.linenum+1;
 	goToEnd();
 	var last_line=env.runtime.linenum;
 	var ret;
 	while(execStatement(condition)){
 		for(env.runtime.linenum=first_line; env.runtime.linenum<last_line; env.runtime.linenum++){
-			ret=execStatement(env.runtime.code[env.runtime.linenum]);
+			ret=execLine(env.runtime.code[env.runtime.linenum]);
 			if(ret=="break"){ break; }
 			else if(ret=="continue"){ break; }
 		}
@@ -103,7 +100,7 @@ function controlFlow(split_line){
 	 * 	["if/elseif",`boolean expression`]
 	 * Returns: N/A
 	 */
-	if(execStatement(split_line.slice(1).join(''))){ //if Expr is true
+	if(execStatement(stringify(split_line.slice(1)))){ //if Expr is true
 		for (++env.runtime.linenum; env.runtime.linenum<env.runtime.code.length; env.runtime.linenum++){
 			token_line=tokenize(env.runtime.code[env.runtime.linenum],all_tokens);
 			if (token_line[0]=="end"){
@@ -116,7 +113,7 @@ function controlFlow(split_line){
 				break;
 			}
 			else{
-				ret=execStatement(env.runtime.code[env.runtime.linenum]);
+				ret=execLine(env.runtime.code[env.runtime.linenum]);
 				if(ret=="break" || ret=="continue"){
 					return ret;
 				}
@@ -147,7 +144,7 @@ function execToEnd(){
 		if (token_line[0]=="end"){
 			break;
 		}
-		ret=execStatement(env.runtime.code[env.runtime.linenum]);
+		ret=execLine(env.runtime.code[env.runtime.linenum]);
 		if(ret=="break" || ret=="continue"){
 			return ret;
 		}
@@ -261,7 +258,7 @@ function evalUserFunc(func, args){
 			env.runtime.code=env.vars[func].val; //Load function content into runtime.
 			// Execute function line-by-line
 			for (env.runtime.linenum=0; env.runtime.linenum<env.runtime.code.length; env.runtime.linenum++){
-				var ret=execStatement(env.runtime.code[env.runtime.linenum]);
+				var ret=execLine(env.runtime.code[env.runtime.linenum]);
 				if (ret=="continue"||ret=="break"){
 					return ret;
 				}
@@ -436,7 +433,7 @@ function nextSemanticBlock( obj, index ){
 		
 	}
 	if(blocked.length){
-		throw("ERROR: Unbalanced token(s) `"+blocked+"` in line: `"+obj.join('')+'`');
+		throw("ERROR: Unbalanced token(s) `"+blocked+"` in line: `"+obj.join(' ')+'`');
 	}
 	return false;
 }
@@ -568,6 +565,24 @@ function tokenize( line, tokens ){
 	return arr;
 }
 
+function stringify( split_line ){
+    /* Turn split lines back into strings. Ensure consecutive barewords
+     * are separated by spaces.
+     * Expects: tokenized string
+     * Returns: line string, with barewords properly separated
+     */
+    var str = "";
+    for (var i=0; i+1<split_line.length; i++){
+        str+=split_line[i];
+        if(isBareword(split_line[i])&&isBareword(split_line[i+1])){
+            str+=' ';
+        }
+    }
+    str+=split_line[split_line.length-1];
+    return str;
+}
+
+
 function structureArray(split_index){
 	/* This function separates array elements in a tokenized list
 	 * by comma tokens for easier parsing.
@@ -632,7 +647,20 @@ function mergeToArray(split_array){
 	 * Expects: list of form ['el1',',','el2']
 	 * Returns: ['el1','el2']
 	 */
-	return split_array.join('').split(',');
+	return stringify(split_array).split(',');
+}
+
+function parse_line(line){
+    /* Takes raw line and returns the tokenized representation.
+     * Expects: Raw string of line
+     * Reutrns: Array of distinct tokens in line, less any whitespace
+     */
+    preparsed_line=preparse(line);
+    split_line = tokenize(preparsed_line, all_tokens);
+    for(var i in split_line){
+        split_line[i]=postParse(split_line[i]);
+    }
+    return split_line;
 }
 
 function execStatement( line ){
@@ -643,34 +671,39 @@ function execStatement( line ){
 	 * Returns: value of executed code.
 	 */
 	try{
-		parsed_line=preparse(line);
-		split_line = tokenize(parsed_line, all_tokens);
-		for(var i in split_line){
-			split_line[i]=postParse(split_line[i]);
-		}
+	    if( line instanceof Array ){
+	        split_line = line;
+	        line = stringify(line);
+        }
+        else{
+            split_line = parse_line(line);
+        }
 		if(split_line[0]=="for"){
 			forLoop(split_line);
+			return;
 		}
-		else if(split_line[0]=="while"){
+		if(split_line[0]=="while"){
 			whileLoop(split_line);
+			return;
 		}
-		else if(split_line[0]=="continue"){
+		if(split_line[0]=="continue"){
 			return "continue";
 		}
-		else if(split_line[0]=="break"){
+		if(split_line[0]=="break"){
 			return "break";
 		}
 		//User defined functions
-		else if(split_line[0]=="function"){
+		if(split_line[0]=="function"){
 			attachFunc(split_line);
+			return;
 		}
 		// Handle if/elseif/else
-		else if(split_line[0]=="if"){
+		if(split_line[0]=="if"){
 			return controlFlow(split_line);
 		}
 
 		//Temporary plotting function for demo
-		else if(split_line[0]=="plot"){
+		if(split_line[0]=="plot"){
 			$('#chart-modal').modal('toggle');
 			var i=1;
 			var data={};
@@ -703,8 +736,9 @@ function execStatement( line ){
 				}
 
 			new_plot(data,type);
+			return;
 		}
-		else if(split_line[0]=="plot"){
+		if(split_line[0]=="plot"){
 			args = nextSemanticBlock(split_line, hasSemanticBlock(split_line, '(', 0));
 			datas=[]; styles=[];
 			data_num=0;
@@ -714,9 +748,10 @@ function execStatement( line ){
 						if(datas['y']){}}}}
 			chart = new_plot(data,style);
 			setTimeout(10000, chart.update());
+			return;
 		}
 
-		else if (split_line.indexOf('=')>0 && split_line[split_line.indexOf('=')+1]!='=' && split_line[split_line.indexOf('=')-1]!='<' && split_line[split_line.indexOf('=')-1]!='>' && split_line[split_line.indexOf('=')-1]!='~'){
+		if (split_line.indexOf('=')>0 && split_line[split_line.indexOf('=')+1]!='=' && split_line[split_line.indexOf('=')-1]!='<' && split_line[split_line.indexOf('=')-1]!='>' && split_line[split_line.indexOf('=')-1]!='~'){
 			//Yay! We've found an assignment!
 			if( split_line.indexOf('=')==1 && isBareword(split_line[0]) ){ // local scalar assignment
 				var varname=split_line[0]; 
@@ -725,7 +760,7 @@ function execStatement( line ){
 				if(hasSemanticBlock(split_line,'[',0)){
 					//expr=structureArray(expr);
 				}
-				tmpvar['val'] = evalExpr( expr.join('') );
+				tmpvar['val'] = evalExpr( stringify(expr) );
 				tmpvar['type'] = 'scalar';
 				return setvar(varname,tmpvar);
 			}
@@ -737,9 +772,11 @@ function execStatement( line ){
 				// Math.js uses [] matrix syntax since it natively uses () for function assignment, matlab uses ()
 				split_line[ indices[0] ] = "[";
 				split_line[ indices[1]-1 ] = "]";
+				// TODO: Get indices, and if varname doesn't exist, 
+				// init as varname=zeros(indices)
 				var varname = split_line[0];
 				var tmpvar={'type': 'scalar'};
-				tmpvar['val'] = evalExpr( split_line.join('') );
+				tmpvar['val'] = evalExpr( stringify(split_line) );
 				return setvar(varname, tmpvar);
 			}
 			else if( split_line[1]="[" ){
@@ -751,16 +788,59 @@ function execStatement( line ){
 			else throw("SyntaxError: Invalid left hand side of assignment!");
 
 		}
-		else{
-			return evalExpr(line);
-		}
-		return;
+        if( split_line[1]=="(" ){ //Matrix element retrieval or function call
+            var indices = nextSemanticBlock(split_line, 1);
+            // Math.js uses [] matrix syntax since it natively uses () for function assignment, matlab uses ()
+            varname = split_line[0]
+            if( getvar(varname) !== undefined && getvar(varname).type == "scalar" ){
+                // If matrix retrieval
+                split_line[ indices[0] ] = "[";
+                split_line[ indices[1]-1 ] = "]";
+                return evalExpr( stringify(split_line) );
+            }
+            // Else if function call
+            return evalExpr(line);
+        }
+        return evalExpr(line);
 	
 	}
 	catch(err){
 	return err;
 	}
 	//math.eval(line);
+}
+
+function execLine( line ){
+    /* Takes a line, possibly many statements separated by semicolons,
+     * and executes each statement. If the last statement ends in a newline,
+     * the result is returned. Else, if it ends in a semicolon, no value is
+     * returned.
+     * Expects: Line String
+     * Returns: Result of last expression, if not supressed by semicolon
+     */
+    console.log("Calling execLine");
+    var split_line = parse_line(line);
+    while ( split_line.length > 0 ){
+        // Execute and shift each statement, returning the result of the last
+        end_statement = nextTokenSkipBlock( split_line, 0, ';' );
+        console.log("line: [" + split_line + "] end: " + end_statement);
+        if( end_statement == -1 ){
+            // If line didn't end in semicolon
+            return execStatement( split_line );
+        }
+        // Else
+        statement = split_line.slice(0, end_statement);
+        split_line = split_line.slice(end_statement+1);
+        console.log("new split_line: " + split_line);
+        ret = execStatement( statement );
+        // Must pass through continue, break, even if supressing output
+		if (ret=="break" || ret=="continue"){
+		    console.log('ret: '+ret+'; ret === "continue": '+ret==="continue");
+			return ret;
+		}
+        console.log("new split_line: " + split_line);
+    }
+    return "";
 }
 
 function evalExpr( expr ){
@@ -800,7 +880,8 @@ function runFile(tab){
 	env.runtime.code=mycode.split('\n');
 	env.runtime.linenum=0;
 	for (; env.runtime.linenum<env.runtime.code.length; env.runtime.linenum++){
-		ret = execStatement(env.runtime.code[env.runtime.linenum]);
+	    console.log("running line "+env.runtime.linenum);
+		ret = execLine(env.runtime.code[env.runtime.linenum]);
 		if (ret=="break" || ret=="continue"){
 			return ret;
 		}
