@@ -354,9 +354,19 @@ function loadLocals(){
 function isBareword( word ){
 	/* Checks if word is a valid variable name. TODO: Can MatLab vars start with '_'?
 	 * Expects: string
-	 * Returns: Bool, whether of not word is a bareword.
+	 * Returns: Bool, whether or not word is a bareword.
 	 */
 	if(word.match(/^[a-zA-Z]\w*$/)) return true; else return false;
+}
+
+function isUnitNum( word ){
+    /* Checks if word is a unitized num, such as "1cm". We should be able
+     * to safely treat these as an atomic unit, assuming this is what the user
+     * meant. For this purpose, a number is considered a "dimensionless" unit.
+     * Expects: string
+     * Returns: Bool, whether or not the word is a unitized num
+     */
+    if(word.match(/^\d+\w*/)) return true; else return false;
 }
 
 function isScalar( word ){
@@ -425,12 +435,12 @@ function nextSemanticBlock( obj, index ){
 					break;
 			}
 		}
-		else if (isBareword(obj[i])) return [i,i+1];
+		//else if (isBareword(obj[i])) return [i,i+1];
 		//Check for blocking every pass and dive in!
 		if (obj[i]=='['){ blocked.push('['); if(blocked.length==1) start_ind=i;}
 		else if(obj[i]=='('){ blocked.push('('); if(blocked.length==1) start_ind=i;}
 		else if(obj[i]=='{'){ blocked.push('{'); if(blocked.length==1) start_ind=i;}
-		
+        else if(blocked.length==0) return [i,i+1];
 	}
 	if(blocked.length){
 		throw("ERROR: Unbalanced token(s) `"+blocked+"` in line: `"+obj.join(' ')+'`');
@@ -445,13 +455,12 @@ function hasSemanticBlock( obj, type, index){
 	 * Returns: Bool, whether properly formatted block of given type exists.
 	 */
 	var n;
-	for(var i=index; i<obj.length;){
+	for(var i=index; i<obj.length;i++){
 		n=nextSemanticBlock(obj,i);
 		if(n){
 			if(obj[n[0]] == type){
 				return n[0];
 			}
-			else i=n[1];
 		}
 		else i++;
 	}
@@ -565,23 +574,6 @@ function tokenize( line, tokens ){
 	return arr;
 }
 
-function stringify( split_line ){
-    /* Turn split lines back into strings. Ensure consecutive barewords
-     * are separated by spaces.
-     * Expects: tokenized string
-     * Returns: line string, with barewords properly separated
-     */
-    var str = "";
-    for (var i=0; i+1<split_line.length; i++){
-        str+=split_line[i];
-        if(isBareword(split_line[i])&&isBareword(split_line[i+1])){
-            str+=' ';
-        }
-    }
-    str+=split_line[split_line.length-1];
-    return str;
-}
-
 
 function structureArray(split_index){
 	/* This function separates array elements in a tokenized list
@@ -603,8 +595,27 @@ function structureArray(split_index){
 	return split_index;
 }
 
+function stringify( split_line ){
+    /* Turn split lines back into strings. Ensure consecutive barewords
+     * are separated by spaces.
+     * Expects: tokenized string
+     * Returns: line string, with barewords properly separated
+     */
+    var str = "";
+    // Add any commas we might need for matrices
+    split_line = structureArray(split_line);
+    for (var i=0; i+1<split_line.length; i++){
+        str+=split_line[i];
+        if( (isUnitNum(split_line[i])||isBareword(split_line[i]))
+           && (isUnitNum(split_line[i+1])||isBareword(split_line[i+1]))){
+            str+=' ';
+        }
+    }
+    str+=split_line[split_line.length-1];
+    return str;
+}
+
 function nextTokenSkipBlock(split_array, index, token){
-	// TODO: THIS FUNCTION IS UNTESTED
 	/* Returns the next instance of `token` after `index`
 	 * subject to the constraint that `token` is not
 	 * contained in a semantic block.
@@ -613,12 +624,11 @@ function nextTokenSkipBlock(split_array, index, token){
 	 * Returns: the index of next token instance or -1 if not found
 	 */
 	while (index < split_array.length){
-		tok_index = split_array.indexOf(token,index);
-		block_range = nextSemanticBlock(split_array,index) || [0,0];
-		if ( tok_index < block_range[0] || tok_index > block_range[1] ){
-			return tok_index;
-		}
-		else index = block_range[1];
+		block_range = nextSemanticBlock(split_array,index);
+		if ( !block_range ) return -1;
+		if ( split_array[block_range[0]] == token ) return block_range[0];
+		if ( split_array[block_range[1]] == token ) return block_range[1];
+		index = block_range[1];
 	}
 	return -1;
 }
@@ -818,12 +828,10 @@ function execLine( line ){
      * Expects: Line String
      * Returns: Result of last expression, if not supressed by semicolon
      */
-    console.log("Calling execLine");
     var split_line = parse_line(line);
     while ( split_line.length > 0 ){
         // Execute and shift each statement, returning the result of the last
         end_statement = nextTokenSkipBlock( split_line, 0, ';' );
-        console.log("line: [" + split_line + "] end: " + end_statement);
         if( end_statement == -1 ){
             // If line didn't end in semicolon
             return execStatement( split_line );
@@ -831,14 +839,11 @@ function execLine( line ){
         // Else
         statement = split_line.slice(0, end_statement);
         split_line = split_line.slice(end_statement+1);
-        console.log("new split_line: " + split_line);
         ret = execStatement( statement );
         // Must pass through continue, break, even if supressing output
 		if (ret=="break" || ret=="continue"){
-		    console.log('ret: '+ret+'; ret === "continue": '+ret==="continue");
 			return ret;
 		}
-        console.log("new split_line: " + split_line);
     }
     return "";
 }
@@ -880,7 +885,6 @@ function runFile(tab){
 	env.runtime.code=mycode.split('\n');
 	env.runtime.linenum=0;
 	for (; env.runtime.linenum<env.runtime.code.length; env.runtime.linenum++){
-	    console.log("running line "+env.runtime.linenum);
 		ret = execLine(env.runtime.code[env.runtime.linenum]);
 		if (ret=="break" || ret=="continue"){
 			return ret;

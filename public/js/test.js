@@ -110,6 +110,12 @@ function unit_tests(){
         a=execLine("a(1,2)=3; a(1,2)");
         if(a!=3)
             throw("Error 32. Failed to retrieve matrix element. Should be 3, but was "+a);
+        a=execLine("a=[1,2;3,4]; a(1,2)");
+        if(a!=2)
+            throw("Error 33. Failed to define matrix. a should be 2, was "+a);
+        a=execLine("a=[5 6; 7 8]; a(2,2)");
+        if(a!=8)
+            throw("Error 34. Deliminating matrix elements by spaces failed. Should have returned 8, was "+a)
     }
 	catch(e){
 		err.push(e);
