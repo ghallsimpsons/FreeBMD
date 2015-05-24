@@ -210,7 +210,9 @@ function attachFunc(split_line){
 				continue;
 			}
 		}
-        math[func]=function(args){ return evalUserFunc(func, Array.prototype.slice.call(arguments)); }
+        math[func] = function(args){
+            return evalUserFunc(func, Array.prototype.slice.call(arguments));
+        };
 
 		env.vars[func].varin=inVar;
 
@@ -233,7 +235,9 @@ function attachFunc(split_line){
 				continue;
 			}
 		}
-		math[func]=function(args){ return evalUserFunc(func, Array.prototype.slice.call(arguments)); }
+		math[func]=function(args){
+		    return evalUserFunc(func, Array.prototype.slice.call(arguments));
+		};
 
 		env.vars[func].varin=inVar;
 
@@ -527,7 +531,7 @@ function postParse( str ){
 	 * Returns: The string with original values
 	 */
 	return str.replace(/%(\w)%/g,function(a,b){return parse_helper['%'+b+'%'];});
-	}
+}
 
 function tokenizeStr( str, token ){
 	/* The second step in tokenization is breaking the
@@ -712,7 +716,10 @@ function execStatement( line ){
 			return controlFlow(split_line);
 		}
 
-		//Temporary plotting function for demo
+		// Temporary plotting function for demo
+		// TODO: with the introduction of webworkers,
+		// plot will need to postMessage in order to initialize
+		// the plot in the browser.
 		if(split_line[0]=="plot"){
 			$('#chart-modal').modal('toggle');
 			var i=1;
@@ -890,4 +897,25 @@ function runFile(tab){
 			return ret;
 		}
 	}
+}
+
+onmessage = function(e){
+    /* Entry point for FreeBMD, running command in dedicated worker thread.
+     * Call with worker.postMessage([source, data]);
+     * Expects: Array of form [source, data]
+     *      - source is either "file" or "console"
+     *      - data is either tab num for file, or line string for console.
+     * Returns: Posts value to print to console, if any.
+     */
+    switch(e[0]){
+        case "file":
+            postMessage( runFile(e[1]) );
+            break;
+        case "console":
+            postMessage( execLine(e[1]) );
+            break;
+        default:
+            // Exceptions are passed to function worker.onerror
+            throw("Error: Invalid source.");
+    }
 }
