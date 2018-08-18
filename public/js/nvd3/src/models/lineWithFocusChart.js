@@ -336,7 +336,7 @@ nv.models.lineWithFocusChart = function() {
       // Functions
       //------------------------------------------------------------
 
-      // Taken from crossfilter (http://square.github.com/crossfilter/)
+      // Taken from crossfilter (https://square.github.com/crossfilter/)
       function resizePath(d) {
         var e = +(d == 'e'),
             x = e ? 1 : -1,

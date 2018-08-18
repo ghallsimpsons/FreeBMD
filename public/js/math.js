@@ -16,7 +16,7 @@
  * use this file except in compliance with the License. You may obtain a copy
  * of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
@@ -5677,9 +5677,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    if (isCollection(x)) {
 	      if (isCollection(y)) {
 	        // TODO: implement matrix right division using pseudo inverse
-	        // http://www.mathworks.nl/help/matlab/ref/mrdivide.html
-	        // http://www.gnu.org/software/octave/doc/interpreter/Arithmetic-Ops.html
-	        // http://stackoverflow.com/questions/12263932/how-does-gnu-octave-matrix-division-work-getting-unexpected-behaviour
+	        // https://www.mathworks.nl/help/matlab/ref/mrdivide.html
+	        // https://www.gnu.org/software/octave/doc/interpreter/Arithmetic-Ops.html
+	        // https://stackoverflow.com/questions/12263932/how-does-gnu-octave-matrix-division-work-getting-unexpected-behaviour
 	        return math.multiply(x, math.inv(y));
 	      }
 	      else {
@@ -6147,7 +6147,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	          throw new Error('Parameters in function gcd must be integer numbers');
 	        }
 
-	        // http://en.wikipedia.org/wiki/Euclidean_algorithm
+	        // https://en.wikipedia.org/wiki/Euclidean_algorithm
 	        while (b != 0) {
 	          r = a % b;
 	          a = b;
@@ -6453,7 +6453,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	          return 0;
 	        }
 
-	        // http://en.wikipedia.org/wiki/Euclidean_algorithm
+	        // https://en.wikipedia.org/wiki/Euclidean_algorithm
 	        // evaluate gcd here inline to reduce overhead
 	        var prod = a * b;
 	        while (b != 0) {
@@ -6679,7 +6679,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      throw new math.error.ArgumentsError('mod', arguments.length, 2);
 	    }
 
-	    // see http://functions.wolfram.com/IntegerFunctions/Mod/
+	    // see https://functions.wolfram.com/IntegerFunctions/Mod/
 
 	    if (isNumber(x)) {
 	      if (isNumber(y)) {
@@ -8189,7 +8189,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	   * @return {Array}              An array containing 3 integers [div, m, n]
 	   *                              where div = gcd(a, b) and a*m + b*n = div
 	   *
-	   * @see http://en.wikipedia.org/wiki/Extended_Euclidean_algorithm
+	   * @see https://en.wikipedia.org/wiki/Extended_Euclidean_algorithm
 	   */
 	  math.xgcd = function xgcd(a, b) {
 	    if (arguments.length == 2) {
@@ -8234,7 +8234,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	   */
 	  function _xgcd(a, b) {
 	    //*
-	    // source: http://en.wikipedia.org/wiki/Extended_Euclidean_algorithm
+	    // source: https://en.wikipedia.org/wiki/Extended_Euclidean_algorithm
 	    var t, // used to swap two variables
 	        q, // quotient
 	        r, // remainder
@@ -9695,9 +9695,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    else {
 	      // this is a matrix of 3 x 3 or larger
 	      // calculate inverse using gauss-jordan elimination
-	      //      http://en.wikipedia.org/wiki/Gaussian_elimination
-	      //      http://mathworld.wolfram.com/MatrixInverse.html
-	      //      http://math.uww.edu/~mcfarlat/inverse.htm
+	      //      https://en.wikipedia.org/wiki/Gaussian_elimination
+	      //      https://mathworld.wolfram.com/MatrixInverse.html
+	      //      https://math.uww.edu/~mcfarlat/inverse.htm
 
 	      // make a copy of the matrix (only the arrays, not of the elements)
 	      var A = matrix.concat();
@@ -10789,7 +10789,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    },
 
 	    // Implementation of normal distribution using Box-Muller transform
-	    // ref : http://en.wikipedia.org/wiki/Box%E2%80%93Muller_transform
+	    // ref : https://en.wikipedia.org/wiki/Box%E2%80%93Muller_transform
 	    // We take : mean = 0.5, standard deviation = 1/6
 	    // so that 99.7% values are in [0, 1].
 	    normal: function() {
@@ -11789,7 +11789,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	   * @param {Number | Boolean | Complex | Array | Matrix} x
 	   * @return {Number | Complex | Array | Matrix} res
 	   *
-	   * @see http://mathworld.wolfram.com/InverseCosine.html
+	   * @see https://mathworld.wolfram.com/InverseCosine.html
 	   */
 	  math.acos = function acos(x) {
 	    if (arguments.length != 1) {
@@ -11870,7 +11870,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	   * @param {Number | Boolean | Complex | Array | Matrix} x
 	   * @return {Number | Complex | Array | Matrix} res
 	   *
-	   * @see http://mathworld.wolfram.com/InverseSine.html
+	   * @see https://mathworld.wolfram.com/InverseSine.html
 	   */
 	  math.asin = function asin(x) {
 	    if (arguments.length != 1) {
@@ -11949,7 +11949,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	   * @param {Number | Boolean | Complex | Array | Matrix} x
 	   * @return {Number | Complex | Array | Matrix} res
 	   *
-	   * @see http://mathworld.wolfram.com/InverseTangent.html
+	   * @see https://mathworld.wolfram.com/InverseTangent.html
 	   */
 	  math.atan = function atan(x) {
 	    if (arguments.length != 1) {
@@ -12025,7 +12025,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	   * @param {Number | Boolean | Complex | Array | Matrix} x
 	   * @return {Number | Complex | Array | Matrix} res
 	   *
-	   * @see http://mathworld.wolfram.com/InverseTangent.html
+	   * @see https://mathworld.wolfram.com/InverseTangent.html
 	   */
 	  math.atan2 = function atan2(y, x) {
 	    if (arguments.length != 2) {
@@ -12092,7 +12092,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	   * @param {Number | Boolean | Complex | Unit | Array | Matrix} x
 	   * @return {Number | Complex | Array | Matrix} res
 	   *
-	   * @see http://mathworld.wolfram.com/Cosine.html
+	   * @see https://mathworld.wolfram.com/Cosine.html
 	   */
 	  math.cos = function cos(x) {
 	    if (arguments.length != 1) {
@@ -12386,7 +12386,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	   * @param {Number | Boolean | Complex | Unit | Array | Matrix} x
 	   * @return {Number | Complex | Array | Matrix} res
 	   *
-	   * @see http://mathworld.wolfram.com/Sine.html
+	   * @see https://mathworld.wolfram.com/Sine.html
 	   */
 	  math.sin = function sin(x) {
 	    if (arguments.length != 1) {
@@ -12458,7 +12458,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	   * @param {Number | Boolean | Complex | Unit | Array | Matrix} x
 	   * @return {Number | Complex | Array | Matrix} res
 	   *
-	   * @see http://mathworld.wolfram.com/Tangent.html
+	   * @see https://mathworld.wolfram.com/Tangent.html
 	   */
 	  math.tan = function tan(x) {
 	    if (arguments.length != 1) {

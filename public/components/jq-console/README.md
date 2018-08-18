@@ -3,7 +3,7 @@
 A jQuery terminal plugin written in CoffeeScript.  
   
 This project was spawned because of our need for a simple web terminal plugin   
-for the <a href="http://repl.it">repl.it</a> project. It tries to simulate a low level terminal by providing (almost)  
+for the <a href="https://repl.it">repl.it</a> project. It tries to simulate a low level terminal by providing (almost)  
 raw input/output streams as well as input and output states.  
   
 Version 2.0 adds baked-in support for rich multi-line prompting and operation  
@@ -515,7 +515,7 @@ You'll need to include the `ansi.css` file for default effects or create your
 own using the css classes from the table below.
 
 ###SGR
-[Reference](http://en.wikipedia.org/wiki/ANSI_escape_code#graphics).
+[Reference](https://en.wikipedia.org/wiki/ANSI_escape_code#graphics).
 <table>
   <tr>
     <th>Code</th>
@@ -660,7 +660,7 @@ own using the css classes from the table below.
 </table>
 
 ###Colors
-[Reference](http://en.wikipedia.org/wiki/ANSI_escape_code#Colors).
+[Reference](https://en.wikipedia.org/wiki/ANSI_escape_code#Colors).
 <table>
   <tr>
     <th>Code offset</th>
@@ -722,9 +722,9 @@ further customization.
   
 ##Contributors  
   
-[Max Shawabkeh](http://max99x.com/)    
-[Amjad Masad](http://twitter.com/amasad)  
+[Max Shawabkeh](https://max99x.com/)    
+[Amjad Masad](https://twitter.com/amasad)  
 
 ## License
 
-[MIT](http://opensource.org/licenses/MIT)
+[MIT](https://opensource.org/licenses/MIT)

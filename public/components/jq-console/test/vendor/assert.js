@@ -1,10 +1,10 @@
-// http://wiki.commonjs.org/wiki/Unit_Testing/1.0
+// https://wiki.commonjs.org/wiki/Unit_Testing/1.0
 //
 // THIS IS NOT TESTED NOR LIKELY TO WORK OUTSIDE V8!
 //
 // Copyright (c) 2011 Jxck
 //
-// Originally from node.js (http://nodejs.org)
+// Originally from node.js (https://nodejs.org)
 // Copyright Joyent, Inc.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
